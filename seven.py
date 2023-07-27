@@ -59,7 +59,8 @@ def rotate_u(arr, k=1):
 
     for i in range(len(aaa)):
         for j in range(len(aaa[i])):
-            aaa[i][j]["l"], aaa[i][j]["b"], aaa[i][j]["r"], aaa[i][j]["f"] = aaa[i][j]["f"], aaa[i][j]["l"], aaa[i][j]["b"], aaa[i][j]["r"]
+            aaa[i][j]["l"], aaa[i][j]["b"], aaa[i][j]["r"], aaa[i][j]["f"] =\
+            aaa[i][j]["f"], aaa[i][j]["l"], aaa[i][j]["b"], aaa[i][j]["r"]
 
     aaa = np.rot90(aaa, k=k)
     arr[:, r, :] = aaa
@@ -70,7 +71,8 @@ def rotate_d(arr, k=1):
 
     for i in range(len(aaa)):
         for j in range(len(aaa[i])):
-            aaa[i][j]["r"], aaa[i][j]["f"], aaa[i][j]["l"], aaa[i][j]["b"] = aaa[i][j]["f"], aaa[i][j]["l"], aaa[i][j]["b"], aaa[i][j]["r"]
+            aaa[i][j]["r"], aaa[i][j]["f"], aaa[i][j]["l"], aaa[i][j]["b"] =\
+            aaa[i][j]["f"], aaa[i][j]["l"], aaa[i][j]["b"], aaa[i][j]["r"]
 
     aaa = np.rot90(aaa, k=k, axes=(1,0))
     arr[:, r, :] = aaa
@@ -81,7 +83,8 @@ def rotate_l(arr, k=1):
 
     for i in range(len(aaa)):
         for j in range(len(aaa[i])):
-            aaa[i][j]["d"], aaa[i][j]["f"], aaa[i][j]["u"], aaa[i][j]["b"] = aaa[i][j]["f"], aaa[i][j]["u"], aaa[i][j]["b"], aaa[i][j]["d"]
+            aaa[i][j]["d"], aaa[i][j]["f"], aaa[i][j]["u"], aaa[i][j]["b"] =\
+            aaa[i][j]["f"], aaa[i][j]["u"], aaa[i][j]["b"], aaa[i][j]["d"]
 
     aaa = np.rot90(aaa, k=k, axes=(1,0))
     arr[:, :, r] = aaa
@@ -92,7 +95,8 @@ def rotate_r(arr, k=1):
 
     for i in range(len(aaa)):
         for j in range(len(aaa[i])):
-            aaa[i][j]["u"], aaa[i][j]["b"], aaa[i][j]["d"], aaa[i][j]["f"] = aaa[i][j]["f"], aaa[i][j]["u"], aaa[i][j]["b"], aaa[i][j]["d"]
+            aaa[i][j]["u"], aaa[i][j]["b"], aaa[i][j]["d"], aaa[i][j]["f"] =\
+            aaa[i][j]["f"], aaa[i][j]["u"], aaa[i][j]["b"], aaa[i][j]["d"]
 
     aaa = np.rot90(aaa, k=k)
     arr[:, :, r] = aaa
@@ -103,7 +107,8 @@ def rotate_f(arr, k=1):
 
     for i in range(len(aaa)):
         for j in range(len(aaa[i])):
-            aaa[i][j]["r"], aaa[i][j]["d"], aaa[i][j]["l"], aaa[i][j]["u"] = aaa[i][j]["u"], aaa[i][j]["r"], aaa[i][j]["d"], aaa[i][j]["l"]
+            aaa[i][j]["r"], aaa[i][j]["d"], aaa[i][j]["l"], aaa[i][j]["u"] =\
+            aaa[i][j]["u"], aaa[i][j]["r"], aaa[i][j]["d"], aaa[i][j]["l"]
 
     aaa = np.rot90(aaa, k=k, axes=(1,0))
     arr[r, :, :] = aaa
@@ -114,7 +119,8 @@ def rotate_b(arr, k=1):
 
     for i in range(len(aaa)):
         for j in range(len(aaa[i])):
-            aaa[i][j]["l"], aaa[i][j]["u"], aaa[i][j]["r"], aaa[i][j]["d"] = aaa[i][j]["u"], aaa[i][j]["r"], aaa[i][j]["d"], aaa[i][j]["l"]
+            aaa[i][j]["l"], aaa[i][j]["u"], aaa[i][j]["r"], aaa[i][j]["d"] =\
+            aaa[i][j]["u"], aaa[i][j]["r"], aaa[i][j]["d"], aaa[i][j]["l"]
 
     aaa = np.rot90(aaa, k=k)
     arr[r, :, :] = aaa
@@ -123,21 +129,45 @@ def rotate_b(arr, k=1):
 
 array = np.array([
     [
-        [{"u": "yellow", "d": None, "l": "blue", "r": None, "f": "red", "b": None}, {"u": "yellow", "d": None, "l": None, "r": None, "f": "red", "b": None}, {"u": "yellow", "d": None, "l": None, "r": "green", "f": "red", "b": None}],
-        [{"u": None, "d": None, "l": "blue", "r": None, "f": "red", "b": None}, {"u": None, "d": None, "l": None, "r": None, "f": "red", "b": None}, {"u": None, "d": None, "l": None, "r": "green", "f": "red", "b": None}],
-        [{"u": None, "d": "white", "l": "blue", "r": None, "f": "red", "b": None}, {"u": None, "d": "white", "l": None, "r": None, "f": "red", "b": None}, {"u": None, "d": "white", "l": None, "r": "green", "f": "red", "b": None}]
+        [{"u": "yellow", "d": None, "l": "blue", "r": None, "f": "red", "b": None},
+        {"u": "yellow", "d": None, "l": None, "r": None, "f": "red", "b": None},
+        {"u": "yellow", "d": None, "l": None, "r": "green", "f": "red", "b": None}],
+
+        [{"u": None, "d": None, "l": "blue", "r": None, "f": "red", "b": None},
+        {"u": None, "d": None, "l": None, "r": None, "f": "red", "b": None},
+        {"u": None, "d": None, "l": None, "r": "green", "f": "red", "b": None}],
+        
+        [{"u": None, "d": "white", "l": "blue", "r": None, "f": "red", "b": None},
+        {"u": None, "d": "white", "l": None, "r": None, "f": "red", "b": None},
+        {"u": None, "d": "white", "l": None, "r": "green", "f": "red", "b": None}]
     ],
     
     [
-        [{"u": "yellow", "d": None, "l": "blue", "r": None, "f": None, "b": None}, {"u": "yellow", "d": None, "l": None, "r": None, "f": None, "b": None}, {"u": "yellow", "d": None, "l": None, "r": "green", "f": None, "b": None}],
-        [{"u": None, "d": None, "l": "blue", "r": None, "f": None, "b": None}, {"u": None, "d": None, "l": None, "r": None, "f": None, "b": None}, {"u": None, "d": None, "l": None, "r": "green", "f": None, "b": None}],
-        [{"u": None, "d": "white", "l": "blue", "r": None, "f": None, "b": None}, {"u": None, "d": "white", "l": None, "r": None, "f": None, "b": None}, {"u": None, "d": "white", "l": None, "r": "green", "f": None, "b": None}]
+        [{"u": "yellow", "d": None, "l": "blue", "r": None, "f": None, "b": None}, 
+        {"u": "yellow", "d": None, "l": None, "r": None, "f": None, "b": None}, 
+        {"u": "yellow", "d": None, "l": None, "r": "green", "f": None, "b": None}],
+
+        [{"u": None, "d": None, "l": "blue", "r": None, "f": None, "b": None}, 
+        {"u": None, "d": None, "l": None, "r": None, "f": None, "b": None}, 
+        {"u": None, "d": None, "l": None, "r": "green", "f": None, "b": None}],
+
+        [{"u": None, "d": "white", "l": "blue", "r": None, "f": None, "b": None}, 
+        {"u": None, "d": "white", "l": None, "r": None, "f": None, "b": None}, 
+        {"u": None, "d": "white", "l": None, "r": "green", "f": None, "b": None}]
     ],
     
     [
-        [{"u": "yellow", "d": None, "l": "blue", "r": None, "f": None, "b": "orange"}, {"u": "yellow", "d": None, "l": None, "r": None, "f": None, "b": "orange"}, {"u": "yellow", "d": None, "l": None, "r": "green", "f": None, "b": "orange"}],
-        [{"u": None, "d": None, "l": "blue", "r": None, "f": None, "b": "orange"}, {"u": None, "d": None, "l": None, "r": None, "f": None, "b": "orange"}, {"u": None, "d": None, "l": None, "r": "green", "f": None, "b": "orange"}],
-        [{"u": None, "d": "white", "l": "blue", "r": None, "f": None, "b": "orange"}, {"u": None, "d": "white", "l": None, "r": None, "f": None, "b": "orange"}, {"u": None, "d": "white", "l": None, "r": "green", "f": None, "b": "orange"}]
+        [{"u": "yellow", "d": None, "l": "blue", "r": None, "f": None, "b": "orange"}, 
+        {"u": "yellow", "d": None, "l": None, "r": None, "f": None, "b": "orange"}, 
+        {"u": "yellow", "d": None, "l": None, "r": "green", "f": None, "b": "orange"}],
+        
+        [{"u": None, "d": None, "l": "blue", "r": None, "f": None, "b": "orange"}, 
+        {"u": None, "d": None, "l": None, "r": None, "f": None, "b": "orange"}, 
+        {"u": None, "d": None, "l": None, "r": "green", "f": None, "b": "orange"}],
+        
+        [{"u": None, "d": "white", "l": "blue", "r": None, "f": None, "b": "orange"}, 
+        {"u": None, "d": "white", "l": None, "r": None, "f": None, "b": "orange"}, 
+        {"u": None, "d": "white", "l": None, "r": "green", "f": None, "b": "orange"}]
     ]
 ])
 
