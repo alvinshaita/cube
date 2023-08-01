@@ -159,77 +159,67 @@ rotate_l(arr)
 
 
 
+def group_sides(arr):
+    orr = {"f": [], "b": [], "u": [], "d": [], "l": [], "r": []}
 
-orr = {"f": [], "b": [], "u": [], "d": [], "l": [], "r": []}
+    ffff = arr[0,:,:]
+    orr["f"] = [[f["f"] for f in ff] for ff in ffff]
 
-ffff = arr[0,:,:]
-for i, ii in enumerate(ffff):
-    orr["f"].append([])
-    for j, jj in enumerate(ii):
-        orr["f"][-1].append(ffff[i][j]["f"])
+    bbbb = arr[-1,:,:]
+    bbbb = np.fliplr(bbbb)
+    orr["b"] = [[b["b"] for b in bb] for bb in bbbb]
 
+    uuuu = arr[:,0,:]
+    uuuu = np.flipud(uuuu)
+    orr["u"] = [[u["u"] for u in uu] for uu in uuuu]
 
-bbbb = arr[-1,:,:]
-bbbb = np.fliplr(bbbb)
-for i, ii in enumerate(bbbb):
-    orr["b"].append([])
-    for j, jj in enumerate(ii):
-        orr["b"][-1].append(bbbb[i][j]["b"])
+    dddd = arr[:,-1,:]
+    orr["d"] = [[d["d"] for d in dd] for dd in dddd]
 
+    llll = arr[:,:,0]
+    llll = np.rot90(llll, k=1, axes=(1,0))
+    orr["l"] = [[l["l"] for l in ll] for ll in llll]
 
-uuuu = arr[:,0,:]
-uuuu = np.flipud(uuuu)
-for i, ii in enumerate(uuuu):
-    orr["u"].append([])
-    for j, jj in enumerate(ii):
-        orr["u"][-1].append(uuuu[i][j]["u"])
+    rrrr = arr[:,:,-1]
+    rrrr = np.rot90(rrrr, k=1)
+    rrrr = np.flipud(rrrr)
+    orr["r"] = [[r["r"] for r in rr] for rr in rrrr]
 
-
-dddd = arr[:,-1,:]
-for i, ii in enumerate(dddd):
-    orr["d"].append([])
-    for j, jj in enumerate(ii):
-        orr["d"][-1].append(dddd[i][j]["d"])
-
-
-llll = arr[:,:,0]
-llll = np.rot90(llll, k=1, axes=(1,0))
-for i, ii in enumerate(llll):
-    orr["l"].append([])
-    for j, jj in enumerate(ii):
-        orr["l"][-1].append(llll[i][j]["l"])
-
-
-rrrr = arr[:,:,-1]
-rrrr = np.rot90(rrrr, k=1)
-rrrr = np.flipud(rrrr)
-for i, ii in enumerate(rrrr):
-    orr["r"].append([])
-    for j, jj in enumerate(ii):
-        orr["r"][-1].append(rrrr[i][j]["r"])
+    return orr
 
 
 
-
-
-
-
-
-
-def repr():
+def repr(arr):
+    orr = group_sides(arr)
     ntl = {"yellow": "y", "red": "r", "green": "g", "orange": "o", "blue": "b", "white": "w", None: " "}
 
-    for i in range(3):
-        print(" ", end="")
-        print(*["".join([ntl[k[i][j]] for j in range(3)]) for k in [[[None for _ in range(3)] for _ in range(3)], orr["u"]]], end="|\n", sep="|")
-    for i in range(3):
-        print("|", end="")
-        print(*["".join([ntl[k[i][j]] for j in range(3)]) for k in [orr["l"], orr["f"], orr["r"], orr["b"]]], end="|\n", sep="|")
-    for i in range(3):
-        print(" ", end="")
-        print(*["".join([ntl[k[i][j]] for j in range(3)]) for k in [[[None for _ in range(3)] for _ in range(3)], orr["d"]]], end="|\n", sep="|")
 
+    rep = ""
+    for i in range(3):
+        # print(" ", end="")
+        # print(*["".join([ntl[k[i][j]] for j in range(3)]) for k in [[[None for _ in range(3)] for _ in range(3)], orr["u"]]], end="|\n", sep="|")
 
-repr()
+        rep += " "
+        rep += "|".join(["".join([ntl[k[i][j]] for j in range(3)]) for k in [[[None for _ in range(3)] for _ in range(3)], orr["u"]]])
+        rep += "|\n"        
+    for i in range(3):
+        # print("|", end="")
+        # print(*["".join([ntl[k[i][j]] for j in range(3)]) for k in [orr["l"], orr["f"], orr["r"], orr["b"]]], end="|\n", sep="|")
+
+        rep += "|"
+        rep += "|".join(["".join([ntl[k[i][j]] for j in range(3)]) for k in [orr["l"], orr["f"], orr["r"], orr["b"]]])
+        rep += "|\n"
+    for i in range(3):
+        # print(" ", end="")
+        # print(*["".join([ntl[k[i][j]] for j in range(3)]) for k in [[[None for _ in range(3)] for _ in range(3)], orr["d"]]], end="|\n", sep="|")
+
+        rep += " "
+        rep += "|".join(["".join([ntl[k[i][j]] for j in range(3)]) for k in [[[None for _ in range(3)] for _ in range(3)], orr["d"]]])
+        rep += "|\n"
+
+    return rep
+
+a = repr(arr)
 
 print("======================")
+print(a)
