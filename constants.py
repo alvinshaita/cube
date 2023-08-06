@@ -71,3 +71,5 @@ DEFAULT_CUBE = [
 		]
 	]
 ]
+
+DEFAULT_STATE = "yyyyyyyyybbbbbbbbbrrrrrrrrrgggggggggooooooooowwwwwwwww"
