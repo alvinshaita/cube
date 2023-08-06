@@ -1,40 +1,39 @@
 import numpy as np
-from constants import DEFAULT_CUBE, SLICE
+from constants import SLICE, DEFAULT_STATE
 from cubelet import Cubelet
 
 class Cube:
-	def __init__(self, state=None):
+	def __init__(self, state=DEFAULT_STATE):
+		assert(len(state) == 3*3*6)
 		self.state = state
-		if state:
-			self.cube_from_state(state)
-			return
-		self.cube = np.array(DEFAULT_CUBE)
-		self.set_state()
+		self.cube_from_state()
 
+		# get the center color from each face
+		self.state[9//2::9]
+		self.solution = "".join([i*9 for i in self.state[9//2::9]])
+		assert(len(self.solution) == 3*3*6)
 
-	def cube_from_state(self, state):
+	def cube_from_state(self):
 		self.cube = np.array([[[{} for k in range(3)] for j in range(3)] for i in range(3)])
 
-		assert(len(state) == 3*3*6)
-
 		# reverse
-		u_slice = [[state[9*0:9*1][3*i+j] for j in range(3)] for i in range(3)]
+		u_slice = [[self.state[9*0:9*1][3*i+j] for j in range(3)] for i in range(3)]
 		u_slice = np.flipud(u_slice)
 
-		l_slice = [[state[9*1:9*2][3*i+j] for j in range(3)] for i in range(3)]
+		l_slice = [[self.state[9*1:9*2][3*i+j] for j in range(3)] for i in range(3)]
 		l_slice = np.rot90(l_slice, k=-1, axes=(1,0))
 
-		f_slice = [[state[9*2:9*3][3*i+j] for j in range(3)] for i in range(3)]
+		f_slice = [[self.state[9*2:9*3][3*i+j] for j in range(3)] for i in range(3)]
 		f_slice = np.array(f_slice)
 
-		r_slice = [[state[9*3:9*4][3*i+j] for j in range(3)] for i in range(3)]
+		r_slice = [[self.state[9*3:9*4][3*i+j] for j in range(3)] for i in range(3)]
 		r_slice = np.flipud(r_slice)
 		r_slice = np.rot90(r_slice, k=-1)
 
-		b_slice = [[state[9*4:9*5][3*i+j] for j in range(3)] for i in range(3)]
+		b_slice = [[self.state[9*4:9*5][3*i+j] for j in range(3)] for i in range(3)]
 		b_slice = np.fliplr(b_slice)
 
-		d_slice = [[state[9*5:9*6][3*i+j] for j in range(3)] for i in range(3)]
+		d_slice = [[self.state[9*5:9*6][3*i+j] for j in range(3)] for i in range(3)]
 		d_slice = np.array(d_slice)
 
 
@@ -223,7 +222,8 @@ class Cube:
 
 # state = "yyyyyyyyybbbbbbbbbrrrrrrrrrgggggggggooooooooowwwwwwwww"
 state = "oggoyrbbryyrbbbwwwyrgyrwbrwyyoggwggwyyboowoogrgorworbb"
-c = Cube(state)
+# c = Cube(state)
+c = Cube()
 
 # print(c.state)
 # c.rotate_f(5)
@@ -236,4 +236,4 @@ c = Cube(state)
 print(c.state)
 # print(c)
 c.set_state()
-print(c.state)
+print(c.solution)
