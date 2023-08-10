@@ -1,9 +1,12 @@
 import numpy as np
 from constants import SLICE, DEFAULT_STATE
 from cubelet import Cubelet
+import copy
 
 class Cube:
 	def __init__(self, state=DEFAULT_STATE):
+		self.path = []
+
 		assert(len(state) == 3*3*6)
 		self.state = state
 		self.cube_from_state()
@@ -12,6 +15,16 @@ class Cube:
 		self.state[9//2::9]
 		self.solution = "".join([i*9 for i in self.state[9//2::9]])
 		assert(len(self.solution) == 3*3*6)
+
+	def __eq__(self, other):
+		# only state determines equality, path does not
+		return self.state == other.state
+
+	def solved(self):
+		return self.state == self.solution
+
+	def copy(self):
+		return copy.deepcopy(self)
 
 	def cube_from_state(self):
 		self.cube = np.array([[[{} for k in range(3)] for j in range(3)] for i in range(3)])
@@ -89,7 +102,9 @@ class Cube:
 				cube_slice[i][j].pos[l[0]], cube_slice[i][j].pos[l[1]], cube_slice[i][j].pos[l[2]], cube_slice[i][j].pos[l[3]] =\
 				cube_slice[i][j].pos[r[0]], cube_slice[i][j].pos[r[1]], cube_slice[i][j].pos[r[2]], cube_slice[i][j].pos[r[3]]
 
-	def rotate_u(self, times=1):
+	def rotate_u(self, t=1):
+		times = t%(3+1)
+		self.path.append(("u", times))
 		cube_slice = self.cube[SLICE.U]
 		cube_slice = np.rot90(cube_slice, k=times)
 
@@ -101,7 +116,9 @@ class Cube:
 		self.cube[SLICE.U] = cube_slice
 		self.set_state()
 
-	def rotate_d(self, times=1):
+	def rotate_d(self, t=1):
+		times = t%(3+1)
+		self.path.append(("d", times))
 		cube_slice = self.cube[SLICE.D]
 		cube_slice = np.rot90(cube_slice, k=times, axes=(1,0))
 
@@ -113,7 +130,9 @@ class Cube:
 		self.cube[SLICE.D] = cube_slice
 		self.set_state()
 
-	def rotate_l(self, times=1):
+	def rotate_l(self, t=1):
+		times = t%(3+1)
+		self.path.append(("l", times))
 		cube_slice = self.cube[SLICE.L]
 		cube_slice = np.rot90(cube_slice, k=times, axes=(1,0))
 
@@ -125,7 +144,9 @@ class Cube:
 		self.cube[SLICE.L] = cube_slice
 		self.set_state()
 
-	def rotate_r(self, times=1):
+	def rotate_r(self, t=1):
+		times = t%(3+1)
+		self.path.append(("r", times))
 		cube_slice = self.cube[SLICE.R]
 		cube_slice = np.rot90(cube_slice, k=times)
 
@@ -137,7 +158,9 @@ class Cube:
 		self.cube[SLICE.R] = cube_slice
 		self.set_state()
 
-	def rotate_f(self, times=1):
+	def rotate_f(self, t=1):
+		times = t%(3+1)
+		self.path.append(("f", times))
 		cube_slice = self.cube[SLICE.F]
 		cube_slice = np.rot90(cube_slice, k=times, axes=(1,0))
 
@@ -149,7 +172,9 @@ class Cube:
 		self.cube[SLICE.F] = cube_slice
 		self.set_state()
 
-	def rotate_b(self, times=1):
+	def rotate_b(self, t=1):
+		times = t%(3+1)
+		self.path.append(("b", times))
 		cube_slice = self.cube[SLICE.B]
 		cube_slice = np.rot90(cube_slice, k=times)
 
@@ -202,6 +227,11 @@ class Cube:
 		return orr
 
 	def __repr__(self):
+		return self.to_string()
+		# return str(self.path)
+
+
+	def to_string(self):
 		rep = ""
 		for i in range(3):
 			rep += " "*(3+1) + "|"
@@ -216,24 +246,3 @@ class Cube:
 			rep += self.state[(i+15)*3:(i+16)*3]
 			rep += "|\n"
 		return rep
-
-
-
-
-# state = "yyyyyyyyybbbbbbbbbrrrrrrrrrgggggggggooooooooowwwwwwwww"
-state = "oggoyrbbryyrbbbwwwyrgyrwbrwyyoggwggwyyboowoogrgorworbb"
-# c = Cube(state)
-c = Cube()
-
-# print(c.state)
-# c.rotate_f(5)
-# c.rotate_r(5)
-# c.rotate_b(5)
-# c.rotate_l(5)
-
-
-# default_state = "yyyyyyyyybbbbbbbbbrrrrrrrrrgggggggggooooooooowwwwwwwww"
-print(c.state)
-# print(c)
-c.set_state()
-print(c.solution)
