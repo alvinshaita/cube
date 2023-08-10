@@ -1,52 +1,62 @@
-import numpy as np
-from constants import SLICE, DEFAULT_STATE
-from cubelet import Cubelet
 import copy
+import re
+
+import numpy as np
+
+from cubelet import Cubelet
+from constants import SLICE
+
 
 class Cube:
-	def __init__(self, state=DEFAULT_STATE):
+	def __init__(self, size=3, state=None):
 		self.path = []
+		self.size = size
+		self.state = state or "".join([i*(self.size**2) for i in "ybrgow"])
 
-		assert(len(state) == 3*3*6)
-		self.state = state
+		assert(len(self.state) == (self.size**2)*6)
 		self.cube_from_state()
 
-		# get the center color from each face
-		self.state[9//2::9]
-		self.solution = "".join([i*9 for i in self.state[9//2::9]])
-		assert(len(self.solution) == 3*3*6)
+	def set_state(self):
+		orr = self.group_sides()
+		self.state = "".join(["".join(i) for i in [ k[j] for k in [orr[ii] for ii in "ulfrbd"] for j in range(self.size)]])
 
 	def __eq__(self, other):
 		# only state determines equality, path does not
 		return self.state == other.state
 
+	def __repr__(self):
+		return self.to_string()
+		# return str(self.path)
+
 	def solved(self):
-		return self.state == self.solution
+		grouped_solution = sorted([i*(self.size**2) for i in "ybrgow"])
+		grouped_state = sorted(re.findall("."*(self.size**2), self.state))
+		return grouped_solution == grouped_state
 
 	def copy(self):
 		return copy.deepcopy(self)
 
 	def cube_from_state(self):
-		self.cube = np.array([[[{} for k in range(3)] for j in range(3)] for i in range(3)])
+		self.cube = np.array([[[{} for k in range(self.size)] for j in range(self.size)] for i in range(self.size)])
 
 		# reverse
-		u_slice = [[self.state[9*0:9*1][3*i+j] for j in range(3)] for i in range(3)]
+		u_slice = [[self.state[(self.size**2)*0:(self.size**2)*1][self.size*i+j] for j in range(self.size)] for i in range(self.size)]
 		u_slice = np.flipud(u_slice)
 
-		l_slice = [[self.state[9*1:9*2][3*i+j] for j in range(3)] for i in range(3)]
+		l_slice = [[self.state[(self.size**2)*1:(self.size**2)*2][self.size*i+j] for j in range(self.size)] for i in range(self.size)]
 		l_slice = np.rot90(l_slice, k=-1, axes=(1,0))
 
-		f_slice = [[self.state[9*2:9*3][3*i+j] for j in range(3)] for i in range(3)]
+		f_slice = [[self.state[(self.size**2)*2:(self.size**2)*3][self.size*i+j] for j in range(self.size)] for i in range(self.size)]
 		f_slice = np.array(f_slice)
 
-		r_slice = [[self.state[9*3:9*4][3*i+j] for j in range(3)] for i in range(3)]
+		r_slice = [[self.state[(self.size**2)*3:(self.size**2)*4][self.size*i+j] for j in range(self.size)] for i in range(self.size)]
 		r_slice = np.flipud(r_slice)
 		r_slice = np.rot90(r_slice, k=-1)
 
-		b_slice = [[self.state[9*4:9*5][3*i+j] for j in range(3)] for i in range(3)]
+		b_slice = [[self.state[(self.size**2)*4:(self.size**2)*5][self.size*i+j] for j in range(self.size)] for i in range(self.size)]
 		b_slice = np.fliplr(b_slice)
 
-		d_slice = [[self.state[9*5:9*6][3*i+j] for j in range(3)] for i in range(3)]
+		d_slice = [[self.state[(self.size**2)*5:(self.size**2)*6][self.size*i+j] for j in range(self.size)] for i in range(self.size)]
 		d_slice = np.array(d_slice)
 
 
@@ -54,7 +64,7 @@ class Cube:
 		ltn = {"y": "yellow", "r": "red", "g": "green", "o": "orange", "b": "blue", "w": "white"}
 
 
-		cc = [[[{} for k in range(3)] for j in range(3)] for i in range(3)]
+		cc = [[[{} for k in range(self.size)] for j in range(self.size)] for i in range(self.size)]
 		# print(cc)
 		cc = np.array(cc)
 		# uuu = cc[SLICE.U]
@@ -84,15 +94,13 @@ class Cube:
 				cc[SLICE.D][i][j]["d"] = ltn[d_slice[i][j]]
 
 
-		for i in range(3):
-			for j in range(3):
-				for k in range(3):
+		for i in range(self.size):
+			for j in range(self.size):
+				for k in range(self.size):
 					for kk in "ulfrbd":
 						if not cc[i][j][k].get(kk):
 							cc[i][j][k][kk] = None
 					self.cube[i][j][k] = Cubelet(cc[i][j][k])
-
-
 
 	def orient_cubelets(self, cube_slice, l, r):
 		# cubelets are on the correct spot but not facing the correct direction,
@@ -186,12 +194,6 @@ class Cube:
 		self.cube[SLICE.B] = cube_slice
 		self.set_state()
 
-	def set_state(self):
-		orr = self.group_sides()
-		self.state = "".join(["".join(i) for i in [ k[j] for k in [orr[ii] for ii in "ulfrbd"] for j in range(3)]])
-
-
-
 	def group_sides(self):
 		# group sides based on direction and in an order that is easily comprehesible in 2d representation
 		orr = {"f": [], "b": [], "u": [], "d": [], "l": [], "r": []}
@@ -226,23 +228,18 @@ class Cube:
 
 		return orr
 
-	def __repr__(self):
-		return self.to_string()
-		# return str(self.path)
-
-
 	def to_string(self):
 		rep = ""
-		for i in range(3):
-			rep += " "*(3+1) + "|"
-			rep += self.state[i*3:(i+1)*3]
+		for i in range(self.size):
+			rep += " "*(self.size+1) + "|"
+			rep += self.state[i*self.size:(i+1)*self.size]
 			rep += "|\n"
-		for i in range(3):
+		for i in range(self.size):
 			rep += "|"
-			rep += "|".join([self.state[(3+i+3*j)*3:(3+i+3*j+1)*3] for j in range(4)])
+			rep += "|".join([self.state[(self.size+i+self.size*j)*self.size:(self.size+i+self.size*j+1)*self.size] for j in range(4)])
 			rep += "|\n"
-		for i in range(3):
-			rep += " "*(3+1) + "|"
-			rep += self.state[(i+15)*3:(i+16)*3]
+		for i in range(self.size):
+			rep += " "*(self.size+1) + "|"
+			rep += self.state[(i+(self.size*5))*self.size:(i+(self.size*5)+1)*self.size]
 			rep += "|\n"
 		return rep
