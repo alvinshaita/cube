@@ -10,7 +10,39 @@ SLICE = attridict({
 		"B": (-1, slice(None), slice(None)),
 	})
 
-DEFAULT_CUBE = [
+
+
+DEFAULT_CUBE_2X2 = [
+	[
+		[
+			Cubelet({"u": "yellow", "d": None, "l": "blue", "r": None, "f": "red", "b": None}),
+			Cubelet({"u": "yellow", "d": None, "l": None, "r": "green", "f": "red", "b": None})
+		],
+		
+		[
+			Cubelet({"u": None, "d": "white", "l": "blue", "r": None, "f": "red", "b": None}),
+			Cubelet({"u": None, "d": "white", "l": None, "r": "green", "f": "red", "b": None})
+		]
+	],
+	
+	[
+		[
+			Cubelet({"u": "yellow", "d": None, "l": "blue", "r": None, "f": None, "b": "orange"}), 
+			Cubelet({"u": "yellow", "d": None, "l": None, "r": "green", "f": None, "b": "orange"})
+		],
+		
+		[
+			Cubelet({"u": None, "d": "white", "l": "blue", "r": None, "f": None, "b": "orange"}), 
+			Cubelet({"u": None, "d": "white", "l": None, "r": "green", "f": None, "b": "orange"})
+		]
+	]
+]
+
+
+
+
+
+DEFAULT_CUBE_3X3 = [
 	[
 		[
 			Cubelet({"u": "yellow", "d": None, "l": "blue", "r": None, "f": "red", "b": None}),
@@ -71,5 +103,3 @@ DEFAULT_CUBE = [
 		]
 	]
 ]
-
-DEFAULT_STATE = "yyyyyyyyybbbbbbbbbrrrrrrrrrgggggggggooooooooowwwwwwwww"
