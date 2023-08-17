@@ -25,8 +25,9 @@ class Cube:
 		return self.state == other.state
 
 	def __repr__(self):
-		return self.to_string()
+		# return self.to_string()
 		# return str(self.path)
+		return self.state
 
 	def solved(self):
 		grouped_solution = sorted([i*(self.size**2) for i in "ybrgow"])
