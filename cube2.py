@@ -27,7 +27,6 @@ class Cube:
 	def __repr__(self):
 		return self.to_string()
 		# return str(self.path)
-		# return self.state
 
 	def solved(self):
 		grouped_solution = sorted([i*(self.size**2) for i in "ybrgow"])
@@ -68,31 +67,31 @@ class Cube:
 		cc = [[[{} for k in range(self.size)] for j in range(self.size)] for i in range(self.size)]
 		# print(cc)
 		cc = np.array(cc)
-		# uuu = cc[SLICE.U(0)]
+		# uuu = cc[SLICE.U]
 
 		for i in range(len(u_slice)):
 			for j in range(len(u_slice[i])):
-				cc[SLICE.U(0)][i][j]["u"] = ltn[u_slice[i][j]]
+				cc[SLICE.U][i][j]["u"] = ltn[u_slice[i][j]]
 
 		for i in range(len(l_slice)):
 			for j in range(len(l_slice[i])):
-				cc[SLICE.L(0)][i][j]["l"] = ltn[l_slice[i][j]]
+				cc[SLICE.L][i][j]["l"] = ltn[l_slice[i][j]]
 
 		for i in range(len(f_slice)):
 			for j in range(len(f_slice[i])):
-				cc[SLICE.F(0)][i][j]["f"] = ltn[f_slice[i][j]]
+				cc[SLICE.F][i][j]["f"] = ltn[f_slice[i][j]]
 
 		for i in range(len(r_slice)):
 			for j in range(len(r_slice[i])):
-				cc[SLICE.R(0)][i][j]["r"] = ltn[r_slice[i][j]]
+				cc[SLICE.R][i][j]["r"] = ltn[r_slice[i][j]]
 
 		for i in range(len(b_slice)):
 			for j in range(len(b_slice[i])):
-				cc[SLICE.B(0)][i][j]["b"] = ltn[b_slice[i][j]]
+				cc[SLICE.B][i][j]["b"] = ltn[b_slice[i][j]]
 
 		for i in range(len(d_slice)):
 			for j in range(len(d_slice[i])):
-				cc[SLICE.D(0)][i][j]["d"] = ltn[d_slice[i][j]]
+				cc[SLICE.D][i][j]["d"] = ltn[d_slice[i][j]]
 
 
 		for i in range(self.size):
@@ -111,10 +110,10 @@ class Cube:
 				cube_slice[i][j].pos[l[0]], cube_slice[i][j].pos[l[1]], cube_slice[i][j].pos[l[2]], cube_slice[i][j].pos[l[3]] =\
 				cube_slice[i][j].pos[r[0]], cube_slice[i][j].pos[r[1]], cube_slice[i][j].pos[r[2]], cube_slice[i][j].pos[r[3]]
 
-	def rotate_u(self, times_to_move=1, index_to_move=0):
-		times = times_to_move%(3+1)
+	def rotate_u(self, t=1):
+		times = t%(3+1)
 		self.path.append(("u", times))
-		cube_slice = self.cube[SLICE.U(index_to_move)]
+		cube_slice = self.cube[SLICE.U]
 		cube_slice = np.rot90(cube_slice, k=times)
 
 		aaa = "lbrf"
@@ -122,13 +121,13 @@ class Cube:
 			aaa = aaa[-1] + aaa[:3]
 
 		self.orient_cubelets(cube_slice, "lbrf", aaa)
-		self.cube[SLICE.U(index_to_move)] = cube_slice
+		self.cube[SLICE.U] = cube_slice
 		self.set_state()
 
-	def rotate_d(self, times_to_move=1, index_to_move=0):
-		times = times_to_move%(3+1)
+	def rotate_d(self, t=1):
+		times = t%(3+1)
 		self.path.append(("d", times))
-		cube_slice = self.cube[SLICE.D(index_to_move)]
+		cube_slice = self.cube[SLICE.D]
 		cube_slice = np.rot90(cube_slice, k=times, axes=(1,0))
 
 		bbb = "rflb"
@@ -136,13 +135,13 @@ class Cube:
 			bbb = bbb[1:] + bbb[0]
 
 		self.orient_cubelets(cube_slice, "rflb", bbb)
-		self.cube[SLICE.D(index_to_move)] = cube_slice
+		self.cube[SLICE.D] = cube_slice
 		self.set_state()
 
-	def rotate_l(self, times_to_move=1, index_to_move=0):
-		times = times_to_move%(3+1)
+	def rotate_l(self, t=1):
+		times = t%(3+1)
 		self.path.append(("l", times))
-		cube_slice = self.cube[SLICE.L(index_to_move)]
+		cube_slice = self.cube[SLICE.L]
 		cube_slice = np.rot90(cube_slice, k=times, axes=(1,0))
 
 		bbb = "dfub"
@@ -150,13 +149,13 @@ class Cube:
 			bbb = bbb[1:] + bbb[0]
 
 		self.orient_cubelets(cube_slice, "dfub", bbb)
-		self.cube[SLICE.L(index_to_move)] = cube_slice
+		self.cube[SLICE.L] = cube_slice
 		self.set_state()
 
-	def rotate_r(self, times_to_move=1, index_to_move=0):
-		times = times_to_move%(3+1)
+	def rotate_r(self, t=1):
+		times = t%(3+1)
 		self.path.append(("r", times))
-		cube_slice = self.cube[SLICE.R(index_to_move)]
+		cube_slice = self.cube[SLICE.R]
 		cube_slice = np.rot90(cube_slice, k=times)
 
 		aaa = "ubdf"
@@ -164,13 +163,13 @@ class Cube:
 			aaa = aaa[-1] + aaa[:3]
 
 		self.orient_cubelets(cube_slice, "ubdf", aaa)
-		self.cube[SLICE.R(index_to_move)] = cube_slice
+		self.cube[SLICE.R] = cube_slice
 		self.set_state()
 
-	def rotate_f(self, times_to_move=1, index_to_move=0):
-		times = times_to_move%(3+1)
+	def rotate_f(self, t=1):
+		times = t%(3+1)
 		self.path.append(("f", times))
-		cube_slice = self.cube[SLICE.F(index_to_move)]
+		cube_slice = self.cube[SLICE.F]
 		cube_slice = np.rot90(cube_slice, k=times, axes=(1,0))
 
 		aaa = "rdlu"
@@ -178,13 +177,13 @@ class Cube:
 			aaa = aaa[-1] + aaa[:3]
 
 		self.orient_cubelets(cube_slice, "rdlu", aaa)
-		self.cube[SLICE.F(index_to_move)] = cube_slice
+		self.cube[SLICE.F] = cube_slice
 		self.set_state()
 
-	def rotate_b(self, times_to_move=1, index_to_move=0):
-		times = times_to_move%(3+1)
+	def rotate_b(self, t=1):
+		times = t%(3+1)
 		self.path.append(("b", times))
-		cube_slice = self.cube[SLICE.B(index_to_move)]
+		cube_slice = self.cube[SLICE.B]
 		cube_slice = np.rot90(cube_slice, k=times)
 
 		bbb = "lurd"
@@ -192,7 +191,7 @@ class Cube:
 			bbb = bbb[1:] + bbb[0]
 
 		self.orient_cubelets(cube_slice, "lurd", bbb)
-		self.cube[SLICE.B(index_to_move)] = cube_slice
+		self.cube[SLICE.B] = cube_slice
 		self.set_state()
 
 	def group_sides(self):
@@ -204,25 +203,25 @@ class Cube:
 		ntl = {"yellow": "y", "red": "r", "green": "g", "orange": "o", "blue": "b", "white": "w"}
 
 
-		f_slice = self.cube[SLICE.F(0)]
+		f_slice = self.cube[SLICE.F]
 		orr["f"] = [[ntl[f.pos["f"]] for f in ff] for ff in f_slice]
 
-		b_slice = self.cube[SLICE.B(0)]
+		b_slice = self.cube[SLICE.B]
 		b_slice = np.fliplr(b_slice)
 		orr["b"] = [[ntl[b.pos["b"]] for b in bb] for bb in b_slice]
 
-		u_slice = self.cube[SLICE.U(0)]
+		u_slice = self.cube[SLICE.U]
 		u_slice = np.flipud(u_slice)
 		orr["u"] = [[ntl[u.pos["u"]] for u in uu] for uu in u_slice]
 
-		d_slice = self.cube[SLICE.D(0)]
+		d_slice = self.cube[SLICE.D]
 		orr["d"] = [[ntl[d.pos["d"]] for d in dd] for dd in d_slice]
 
-		l_slice = self.cube[SLICE.L(0)]
+		l_slice = self.cube[SLICE.L]
 		l_slice = np.rot90(l_slice, k=1, axes=(1,0))
 		orr["l"] = [[ntl[l.pos["l"]] for l in ll] for ll in l_slice]
 
-		r_slice = self.cube[SLICE.R(0)]
+		r_slice = self.cube[SLICE.R]
 		r_slice = np.rot90(r_slice, k=1)
 		r_slice = np.flipud(r_slice)
 		orr["r"] = [[ntl[r.pos["r"]] for r in rr] for rr in r_slice]
