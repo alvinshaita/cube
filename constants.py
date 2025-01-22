@@ -1,13 +1,37 @@
 from cubelet import Cubelet
 import attridict
 
+
+SLICES = {
+		"U": attridict({"slice_index_to_move": 1, "slice_to_move": 0}),
+		"D": attridict({"slice_index_to_move": 1, "slice_to_move": -1}),
+		"L": attridict({"slice_index_to_move": 2, "slice_to_move": 0}),
+		"R": attridict({"slice_index_to_move": 2, "slice_to_move": -1}),
+		"F": attridict({"slice_index_to_move": 0, "slice_to_move": 0}),
+		"B": attridict({"slice_index_to_move": 0, "slice_to_move": -1}),
+	}
+
+
+from functools import partial
+
+def twotwo(index, letter):
+	bbb = SLICES[letter]
+	
+	ccc = index
+	if bbb.slice_to_move == -1: ccc = -(index+1)
+
+	_slice = [slice(None) for i in range(3)]
+	_slice[bbb.slice_index_to_move] = ccc
+	return tuple(_slice)
+
+
 SLICE = attridict({
-		"U": (slice(None), 0, slice(None)),
-		"D": (slice(None), -1, slice(None)),
-		"L": (slice(None), slice(None), 0),
-		"R": (slice(None), slice(None), -1),
-		"F": (0, slice(None), slice(None)),
-		"B": (-1, slice(None), slice(None)),
+		"U": partial(twotwo, letter="U"),
+		"D": partial(twotwo, letter="D"),
+		"L": partial(twotwo, letter="L"),
+		"R": partial(twotwo, letter="R"),
+		"F": partial(twotwo, letter="F"),
+		"B": partial(twotwo, letter="B"),
 	})
 
 
