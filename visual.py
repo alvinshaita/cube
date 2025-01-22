@@ -4,10 +4,9 @@ import sys
 # Constants
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 FACE_SIZE = 150
-SQUARE_SIZE = FACE_SIZE // 3
-FPS = 30
-
 CUBE_SIZE = 3
+SQUARE_SIZE = FACE_SIZE // CUBE_SIZE
+FPS = 30
 
 # Colors for cube faces
 WHITE = (255, 255, 255)
@@ -18,35 +17,45 @@ BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
 BLACK = (0, 0, 0)
 
+up_margin = 50
+left_margin = 100
+
 # state = "yyyyyyyyybbbbbbbbbrrrrrrrrrgggggggggooooooooowwwwwwwww"
 state = "yyryyryyrbbbbbbbbbrrwrrwrrwgggggggggyooyooyoowwowwowwo"
+
+# state = "yyyybbbbrrrrggggoooowwww"
+# state = "yryrbbbbrwrwggggyoyowowo"
 
 
 colors = {"y": YELLOW, "b": BLUE, "r": RED, "g": GREEN ,"o": ORANGE, "w": WHITE}
 
 def draw_from_state(screen):
-	u = 50
-	l = 100
-	# s = 200
-	s = FACE_SIZE
-
-	# # Draw the cube faces (simple flat layout)
-	draw_state_face(screen, state[:9], l+s, u)
-	draw_state_face(screen, state[9:18], l, u+s)
-	draw_state_face(screen, state[18:27], l+s, u+s)
-	draw_state_face(screen, state[27:36], l+(2*s), u+s)
-	draw_state_face(screen, state[36:45], l+(3*s), u+s)
-	draw_state_face(screen, state[45:54], l+s, u+(2*s))
-
-
-def draw_state_face(screen, face_state, x, y):
-	face = [[colors[i] for i in face_state[j*3:(j*3)+3]] for j in range(3)]
-
-	for i, row in enumerate(face):
-		for j, color in enumerate(row):
-			rect = pygame.Rect(x + j * SQUARE_SIZE, y + i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
+	for i in range(CUBE_SIZE):
+		aaa = state[i*CUBE_SIZE:(i+1)*CUBE_SIZE]
+		for j, a in enumerate(aaa):
+			color = colors[a]
+			rect = pygame.Rect(left_margin + FACE_SIZE + j * SQUARE_SIZE, up_margin + i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
 			pygame.draw.rect(screen, color, rect)
-			pygame.draw.rect(screen, BLACK, rect, 1)  # Border
+			pygame.draw.rect(screen, BLACK, rect, 1)
+
+
+	for i in range(CUBE_SIZE):
+		for f in range(4):
+			aaa = state[(CUBE_SIZE+i+CUBE_SIZE*f)*CUBE_SIZE:(CUBE_SIZE+i+CUBE_SIZE*f+1)*CUBE_SIZE]
+			for j, a in enumerate(aaa):
+				color = colors[a]
+				rect = pygame.Rect(left_margin + (f*FACE_SIZE) + j * SQUARE_SIZE, up_margin + FACE_SIZE + i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
+				pygame.draw.rect(screen, color, rect)
+				pygame.draw.rect(screen, BLACK, rect, 1)
+
+
+	for i in range(CUBE_SIZE):
+		aaa = state[(i+(CUBE_SIZE*5))*CUBE_SIZE:(i+(CUBE_SIZE*5)+1)*CUBE_SIZE]
+		for j, a in enumerate(aaa):
+			color = colors[a]
+			rect = pygame.Rect(left_margin + FACE_SIZE + j * SQUARE_SIZE, up_margin + (2*FACE_SIZE) + i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
+			pygame.draw.rect(screen, color, rect)
+			pygame.draw.rect(screen, BLACK, rect, 1)
 
 
 # Main loop
@@ -76,22 +85,3 @@ def main():
 
 if __name__ == "__main__":
 	main()
-
-
-
-
-
-
-# from cube import Cube
-
-# cube = Cube(2)
-# print(cube)
-
-# # cube.rotate_r()
-# # cube.rotate_r(index_to_move=0)
-# # cube.rotate_r(index_to_move=1)
-# # cube.rotate_r(index_to_move=2)
-
-# cube.rotate_all_r()
-
-# print(cube)
