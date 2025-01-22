@@ -3,10 +3,11 @@ import sys
 
 # Constants
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
-# CUBE_SIZE = 200
-CUBE_SIZE = 150
-SQUARE_SIZE = CUBE_SIZE // 3
+FACE_SIZE = 150
+SQUARE_SIZE = FACE_SIZE // 3
 FPS = 30
+
+CUBE_SIZE = 3
 
 # Colors for cube faces
 WHITE = (255, 255, 255)
@@ -27,7 +28,7 @@ def draw_from_state(screen):
 	u = 50
 	l = 100
 	# s = 200
-	s = CUBE_SIZE
+	s = FACE_SIZE
 
 	# # Draw the cube faces (simple flat layout)
 	draw_state_face(screen, state[:9], l+s, u)
@@ -53,7 +54,7 @@ def main():
 	pygame.init()
 	screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 	pygame.display.set_caption("Rubik's Cube")
-	clock = pygame.time.Clock()
+	# clock = pygame.time.Clock()
 	
 	running = True
 	while running:
@@ -68,7 +69,7 @@ def main():
 		draw_from_state(screen)
 
 		pygame.display.flip()
-		clock.tick(FPS)
+		# clock.tick(FPS)
 
 	pygame.quit()
 	sys.exit()
