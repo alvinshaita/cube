@@ -1,21 +1,22 @@
 import pygame
 import sys
+from constants import colors
 
-CUBE_SIZE = 1
+CUBE_SIZE = 2
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 FACE_SIZE = 150
 SQUARE_SIZE = FACE_SIZE // CUBE_SIZE
-FPS = 30
+
 
 # Colors for cube faces
-WHITE = (255, 255, 255)
-YELLOW = (255, 255, 0)
-RED = (255, 0, 0)
-ORANGE = (255, 121, 0)
-BLUE = (0, 0, 255)
-GREEN = (0, 255, 0)
-BLACK = (0, 0, 0)
+# WHITE = [255, 255, 255]
+# YELLOW = [255, 255, 0]
+# RED = [255, 0, 0]
+# ORANGE = [255, 121, 0]
+# BLUE = [0, 0, 255]
+# GREEN = [0, 255, 0]
+# colors.black = [0, 0, 0]
 
 top_margin = 50
 left_margin = 100
@@ -26,7 +27,7 @@ state = "yyryyryyrbbbbbbbbbrrwrrwrrwgggggggggyooyooyoowwowwowwo"
 # state = "yyyybbbbrrrrggggoooowwww"
 # state = "yryrbbbbrwrwggggyoyowowo"
 
-colors = {"y": YELLOW, "b": BLUE, "r": RED, "g": GREEN ,"o": ORANGE, "w": WHITE}
+# colors = {"y": YELLOW, "b": BLUE, "r": RED, "g": GREEN ,"o": ORANGE, "w": WHITE}
 
 
 
@@ -44,7 +45,7 @@ def draw_from_state(screen):
 			color = colors[a]
 			rect = pygame.Rect(left_margin + FACE_SIZE + j * SQUARE_SIZE, top_margin + i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
 			pygame.draw.rect(screen, color, rect)
-			pygame.draw.rect(screen, BLACK, rect, 1)
+			pygame.draw.rect(screen, colors.black, rect, 1)
 
 
 	for i in range(CUBE_SIZE):
@@ -54,7 +55,7 @@ def draw_from_state(screen):
 				color = colors[a]
 				rect = pygame.Rect(left_margin + (f*FACE_SIZE) + j * SQUARE_SIZE, top_margin + FACE_SIZE + i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
 				pygame.draw.rect(screen, color, rect)
-				pygame.draw.rect(screen, BLACK, rect, 1)
+				pygame.draw.rect(screen, colors.black, rect, 1)
 
 
 	for i in range(CUBE_SIZE):
@@ -63,7 +64,7 @@ def draw_from_state(screen):
 			color = colors[a]
 			rect = pygame.Rect(left_margin + FACE_SIZE + j * SQUARE_SIZE, top_margin + (2*FACE_SIZE) + i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
 			pygame.draw.rect(screen, color, rect)
-			pygame.draw.rect(screen, BLACK, rect, 1)
+			pygame.draw.rect(screen, colors.black, rect, 1)
 
 
 # Main loop
@@ -75,7 +76,7 @@ def main():
 	
 	running = True
 	while running:
-		screen.fill(BLACK)
+		screen.fill(colors.black)
 		
 		# Handle events
 		for event in pygame.event.get():
