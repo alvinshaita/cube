@@ -1,3 +1,4 @@
 node_modules
 *.nt
+*.vc
 __pycache__
