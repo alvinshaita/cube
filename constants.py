@@ -127,3 +127,15 @@ DEFAULT_CUBE_3X3 = [
 		]
 	]
 ]
+
+
+
+colors = attridict(
+	w=[255, 255, 255], # white
+	y=[255, 255, 0], # yellow
+	r=[255, 0, 0], # red
+	o=[255, 121, 0], # orange
+	b=[0, 0, 255], # blue
+	g=[0, 255, 0], # green
+	black=[0, 0, 0], # black
+)
