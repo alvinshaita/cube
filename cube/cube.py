@@ -3,8 +3,8 @@ import re
 
 import numpy as np
 
-from cubelet import Cubelet
-from constants import SLICE
+from .cubelet import Cubelet
+from .constants import SLICE
 
 
 class Cube:

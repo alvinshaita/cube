@@ -1,7 +1,7 @@
 from functools import partial
 import attridict
 
-from cubelet import Cubelet
+from .cubelet import Cubelet
 
 SLICES = {
 		"U": attridict({"slice_index_to_move": 1, "slice_to_move": 0}),
