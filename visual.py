@@ -1,13 +1,13 @@
 import pygame
 import sys
 from constants import colors
+from cube import Cube
 
 CUBE_SIZE = 2
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 FACE_SIZE = 150
 SQUARE_SIZE = FACE_SIZE // CUBE_SIZE
-
 
 # Colors for cube faces
 # WHITE = [255, 255, 255]
@@ -26,21 +26,15 @@ state = "yyryyryyrbbbbbbbbbrrwrrwrrwgggggggggyooyooyoowwowwowwo"
 
 # state = "yyyybbbbrrrrggggoooowwww"
 # state = "yryrbbbbrwrwggggyoyowowo"
-
 # colors = {"y": YELLOW, "b": BLUE, "r": RED, "g": GREEN ,"o": ORANGE, "w": WHITE}
 
 bbb = [None, None]
 rects = []
 
-
-from cube import Cube
 cube = Cube(CUBE_SIZE)
 
 # import attridict
 # cube = attridict(state=state)
-
-
-
 
 def init_draw_from_state(screen):
 	for i in range(CUBE_SIZE):
@@ -53,7 +47,6 @@ def init_draw_from_state(screen):
 			pygame.draw.rect(screen, color, rect)
 			pygame.draw.rect(screen, colors.black, rect, 1)
 
-
 	for i in range(CUBE_SIZE):
 		for f in range(4):
 			aaa = cube.state[(CUBE_SIZE+i+CUBE_SIZE*f)*CUBE_SIZE:(CUBE_SIZE+i+CUBE_SIZE*f+1)*CUBE_SIZE]
@@ -64,7 +57,6 @@ def init_draw_from_state(screen):
 
 				pygame.draw.rect(screen, color, rect)
 				pygame.draw.rect(screen, colors.black, rect, 1)
-
 
 	for i in range(CUBE_SIZE):
 		aaa = cube.state[(i+(CUBE_SIZE*5))*CUBE_SIZE:(i+(CUBE_SIZE*5)+1)*CUBE_SIZE]
@@ -77,9 +69,6 @@ def init_draw_from_state(screen):
 			pygame.draw.rect(screen, colors.black, rect, 1)
 
 
-
-
-
 def move_tiles(screen):
 	for i in range(CUBE_SIZE):
 		aaa = cube.state[i*CUBE_SIZE:(i+1)*CUBE_SIZE]
@@ -88,7 +77,6 @@ def move_tiles(screen):
 			rect = pygame.Rect(left_margin + FACE_SIZE + j * SQUARE_SIZE, top_margin + i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
 			pygame.draw.rect(screen, color, rect)
 			pygame.draw.rect(screen, colors.black, rect, 1)
-
 
 	for i in range(CUBE_SIZE):
 		for f in range(4):
@@ -99,7 +87,6 @@ def move_tiles(screen):
 				pygame.draw.rect(screen, color, rect)
 				pygame.draw.rect(screen, colors.black, rect, 1)
 
-
 	for i in range(CUBE_SIZE):
 		aaa = cube.state[(i+(CUBE_SIZE*5))*CUBE_SIZE:(i+(CUBE_SIZE*5)+1)*CUBE_SIZE]
 		for j, a in enumerate(aaa):
@@ -107,8 +94,6 @@ def move_tiles(screen):
 			rect = pygame.Rect(left_margin + FACE_SIZE + j * SQUARE_SIZE, top_margin + (2*FACE_SIZE) + i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
 			pygame.draw.rect(screen, color, rect)
 			pygame.draw.rect(screen, colors.black, rect, 1)
-
-
 
 
 def draw_from_state(screen):
@@ -120,7 +105,6 @@ def draw_from_state(screen):
 			# pygame.draw.rect(screen, color, rect)
 			# pygame.draw.rect(screen, colors.black, rect, 1)
 
-
 	for i in range(CUBE_SIZE):
 		for f in range(4):
 			aaa = cube.state[(CUBE_SIZE+i+CUBE_SIZE*f)*CUBE_SIZE:(CUBE_SIZE+i+CUBE_SIZE*f+1)*CUBE_SIZE]
@@ -129,7 +113,6 @@ def draw_from_state(screen):
 				rect = pygame.Rect(left_margin + (f*FACE_SIZE) + j * SQUARE_SIZE, top_margin + FACE_SIZE + i * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE)
 				pygame.draw.rect(screen, color, rect)
 				pygame.draw.rect(screen, colors.black, rect, 1)
-
 
 	for i in range(CUBE_SIZE):
 		aaa = cube.state[(i+(CUBE_SIZE*5))*CUBE_SIZE:(i+(CUBE_SIZE*5)+1)*CUBE_SIZE]
@@ -176,13 +159,10 @@ def main():
 				# mouse_pos = event.pos
 				# cube.rotate_r(index_to_move=0)
 				
-
 				# draw_from_state(screen)
 				# pygame.display.flip()
 
 			# print(event)
-
-
 				# draw_from_state(screen)
 
 		pygame.display.flip()

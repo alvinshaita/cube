@@ -1,6 +1,7 @@
-from cubelet import Cubelet
+from functools import partial
 import attridict
 
+from cubelet import Cubelet
 
 SLICES = {
 		"U": attridict({"slice_index_to_move": 1, "slice_to_move": 0}),
@@ -10,9 +11,6 @@ SLICES = {
 		"F": attridict({"slice_index_to_move": 0, "slice_to_move": 0}),
 		"B": attridict({"slice_index_to_move": 0, "slice_to_move": -1}),
 	}
-
-
-from functools import partial
 
 def twotwo(index, letter):
 	bbb = SLICES[letter]
@@ -33,8 +31,6 @@ SLICE = attridict({
 		"F": partial(twotwo, letter="F"),
 		"B": partial(twotwo, letter="B"),
 	})
-
-
 
 DEFAULT_CUBE_2X2 = [
 	[
@@ -61,10 +57,6 @@ DEFAULT_CUBE_2X2 = [
 		]
 	]
 ]
-
-
-
-
 
 DEFAULT_CUBE_3X3 = [
 	[
@@ -127,8 +119,6 @@ DEFAULT_CUBE_3X3 = [
 		]
 	]
 ]
-
-
 
 colors = attridict(
 	w=[255, 255, 255], # white
