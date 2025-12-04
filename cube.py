@@ -11,7 +11,8 @@ class Cube:
 	def __init__(self, size=3, state=None):
 		self.path = []
 		self.size = size
-		self.state = state or "".join([i*(self.size**2) for i in "ybrgow"])
+		cube_state = state or "".join([i*(self.size**2) for i in "ybrgow"])
+		self.state = cube_state.lower()
 
 		assert(len(self.state) == (self.size**2)*6)
 		self.cube_from_state()
