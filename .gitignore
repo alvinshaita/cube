@@ -1,4 +1,4 @@
-node_modules
+cube.egg-info
 *.nt
 *.vc
 __pycache__
