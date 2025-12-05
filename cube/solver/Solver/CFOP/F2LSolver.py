@@ -1,4 +1,4 @@
-from rubik_solver.Move import Move
+from cube.solver.Move import Move
 from .. import Solver
 from ..Beginner.WhiteFaceSolver import WhiteFaceSolver
 

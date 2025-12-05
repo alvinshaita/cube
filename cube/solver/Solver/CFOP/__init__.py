@@ -1,5 +1,5 @@
 import copy
-from rubik_solver.Move import Move
+from cube.solver.Move import Move
 from .. import Solver
 from ..Beginner import WhiteCrossSolver
 from . import F2LSolver

@@ -1,9 +1,9 @@
 import time
 
-from rubik_solver.Enums import Color
-import rubik_solver.FaceCube as FaceCube
-import rubik_solver.CoordCube as CoordCube
-from rubik_solver.CubieCube import DupedEdge
+from cube.solver.Enums import Color
+import cube.solver.FaceCube as FaceCube
+import cube.solver.CoordCube as CoordCube
+from cube.solver.CubieCube import DupedEdge
 
 
 class DupedFacelet(Exception):

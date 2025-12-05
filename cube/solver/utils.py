@@ -1,7 +1,6 @@
 from __future__ import print_function
 import argparse
 import time
-from past.builtins import basestring
 from .Solver import Solver
 from .Solver import Beginner
 from .Solver import CFOP
@@ -20,7 +19,7 @@ def _check_valid_cube(cube):
     '''Checks if cube is one of str, NaiveCube or Cubie.Cube and returns
     an instance of Cubie.Cube'''
 
-    if isinstance(cube, basestring):
+    if isinstance(cube, str):
         c = NaiveCube()
         c.set_cube(cube)
         cube = c
@@ -36,7 +35,7 @@ def _check_valid_cube(cube):
     return cube
 
 def solve(cube, method = Beginner.BeginnerSolver, *args, **kwargs):
-    if isinstance(method, basestring):
+    if isinstance(method, str):
         if not method in METHODS:
             raise ValueError('Invalid method name, must be one of (%s)' %
                 ', '.join(METHODS.keys())
