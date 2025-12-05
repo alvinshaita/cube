@@ -261,26 +261,38 @@ class Cube:
 				self.rotate_u()
 			elif move == "u'":
 				self.rotate_u(times_to_move=-1)
+			elif move == "u2":
+				self.rotate_u(times_to_move=2)
 			elif move == "l":
 				self.rotate_l()
 			elif move == "l'":
 				self.rotate_l(times_to_move=-1)
+			elif move == "l2":
+				self.rotate_l(times_to_move=2)
 			elif move == "f":
 				self.rotate_f()
 			elif move == "f'":
 				self.rotate_f(times_to_move=-1)
+			elif move == "f2":
+				self.rotate_f(times_to_move=2)
 			elif move == "r":
 				self.rotate_r()
 			elif move == "r'":
 				self.rotate_r(times_to_move=-1)
+			elif move == "r2":
+				self.rotate_r(times_to_move=2)
 			elif move == "b":
 				self.rotate_b()
 			elif move == "b'":
 				self.rotate_b(times_to_move=-1)
+			elif move == "b2":
+				self.rotate_b(times_to_move=2)
 			elif move == "d":
 				self.rotate_d()
 			elif move == "d'":
 				self.rotate_d(times_to_move=-1)
+			elif move == "d2":
+				self.rotate_d(times_to_move=2)
 
 	def rotate_all_u(self, times_to_move=1):
 		# basically changing the orientation of the cube
