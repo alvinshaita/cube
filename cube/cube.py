@@ -1,4 +1,5 @@
 import copy
+import random
 import re
 
 import numpy as np
@@ -11,15 +12,24 @@ class Cube:
 	def __init__(self, size=3, state=None):
 		self.path = []
 		self.size = size
-		cube_state = state or "".join([i*(self.size**2) for i in "ybrgow"])
-		self.state = cube_state.lower()
+
+		self.default_state = "".join([i*(self.size**2) for i in "ybrgow"]).lower()
+		self.state = state.lower() if state else self.default_state
 
 		assert(len(self.state) == (self.size**2)*6)
-		self.cube_from_state()
+		self.generate_cube()
 
-	def set_state(self):
+	def load_state(self):
 		orr = self.group_sides()
-		self.state = "".join(["".join(i) for i in [ k[j] for k in [orr[ii] for ii in "ulfrbd"] for j in range(self.size)]])
+		raw_state = [
+			"".join(i)
+			for i in [
+				k[j]
+				for k in [orr[ii] for ii in "ulfrbd"]
+				for j in range(self.size)
+			]
+		]
+		self.state = "".join(raw_state)
 
 	def __eq__(self, other):
 		# only state determines equality, path does not
@@ -38,62 +48,93 @@ class Cube:
 	def copy(self):
 		return copy.deepcopy(self)
 
-	def cube_from_state(self):
-		self.cube = np.array([[[{} for k in range(self.size)] for j in range(self.size)] for i in range(self.size)])
+	# generates a cube array from the state
+	# each item is a Cubelet
+	def generate_cube(self):
+		"""
+		Generate a cube. A 3 dimension array holding each piece of the cube
+		"""
+		# create array of NxNxN
+		self.cube = np.array([[[
+			{}
+			for _ in range(self.size)]
+			for _ in range(self.size)]
+			for _ in range(self.size)]
+		)
 
+		# group each face of the cube
 		# reverse
-		u_slice = [[self.state[(self.size**2)*0:(self.size**2)*1][self.size*i+j] for j in range(self.size)] for i in range(self.size)]
+		u_slice = [[
+			self.state[(self.size**2)*0 : (self.size**2)*1][self.size*i+j]
+			for j in range(self.size)]
+			for i in range(self.size)]
 		u_slice = np.flipud(u_slice)
 
-		l_slice = [[self.state[(self.size**2)*1:(self.size**2)*2][self.size*i+j] for j in range(self.size)] for i in range(self.size)]
+		l_slice = [[
+			self.state[(self.size**2)*1 : (self.size**2)*2][self.size*i+j]
+			for j in range(self.size)]
+			for i in range(self.size)]
 		l_slice = np.rot90(l_slice, k=-1, axes=(1,0))
 
-		f_slice = [[self.state[(self.size**2)*2:(self.size**2)*3][self.size*i+j] for j in range(self.size)] for i in range(self.size)]
+		f_slice = [[
+			self.state[(self.size**2)*2 : (self.size**2)*3][self.size*i+j]
+			for j in range(self.size)]
+			for i in range(self.size)]
 		f_slice = np.array(f_slice)
 
-		r_slice = [[self.state[(self.size**2)*3:(self.size**2)*4][self.size*i+j] for j in range(self.size)] for i in range(self.size)]
+		r_slice = [[
+			self.state[(self.size**2)*3 : (self.size**2)*4][self.size*i+j]
+			for j in range(self.size)]
+			for i in range(self.size)]
 		r_slice = np.flipud(r_slice)
 		r_slice = np.rot90(r_slice, k=-1)
 
-		b_slice = [[self.state[(self.size**2)*4:(self.size**2)*5][self.size*i+j] for j in range(self.size)] for i in range(self.size)]
+		b_slice = [[
+			self.state[(self.size**2)*4 : (self.size**2)*5][self.size*i+j]
+			for j in range(self.size)]
+			for i in range(self.size)]
 		b_slice = np.fliplr(b_slice)
 
-		d_slice = [[self.state[(self.size**2)*5:(self.size**2)*6][self.size*i+j] for j in range(self.size)] for i in range(self.size)]
+		d_slice = [[
+			self.state[(self.size**2)*5 : (self.size**2)*6][self.size*i+j]
+			for j in range(self.size)]
+			for i in range(self.size)]
 		d_slice = np.array(d_slice)
 
 
-		# letter to name
-		ltn = {"y": "yellow", "r": "red", "g": "green", "o": "orange", "b": "blue", "w": "white"}
+		# letter to map to color name
+		color_map = {"y": "yellow", "r": "red", "g": "green", "o": "orange", "b": "blue", "w": "white"}
 
-
-		cc = [[[{} for k in range(self.size)] for j in range(self.size)] for i in range(self.size)]
-		# print(cc)
+		cc = [[[
+			{}
+			for _ in range(self.size)]
+			for _ in range(self.size)]
+			for _ in range(self.size)]
 		cc = np.array(cc)
-		# uuu = cc[SLICE.U(0)]
 
-		for i in range(len(u_slice)):
-			for j in range(len(u_slice[i])):
-				cc[SLICE.U(0)][i][j]["u"] = ltn[u_slice[i][j]]
+		for i in range(self.size):
+			for j in range(self.size):
+				cc[SLICE.U(0)] [i] [j] ["u"] = color_map[ u_slice[i][j] ]
 
-		for i in range(len(l_slice)):
-			for j in range(len(l_slice[i])):
-				cc[SLICE.L(0)][i][j]["l"] = ltn[l_slice[i][j]]
+		for i in range(self.size):
+			for j in range(self.size):
+				cc[SLICE.L(0)] [i] [j] ["l"] = color_map[ l_slice[i][j] ]
 
-		for i in range(len(f_slice)):
-			for j in range(len(f_slice[i])):
-				cc[SLICE.F(0)][i][j]["f"] = ltn[f_slice[i][j]]
+		for i in range(self.size):
+			for j in range(self.size):
+				cc[SLICE.F(0)] [i] [j] ["f"] = color_map[ f_slice[i][j] ]
 
-		for i in range(len(r_slice)):
-			for j in range(len(r_slice[i])):
-				cc[SLICE.R(0)][i][j]["r"] = ltn[r_slice[i][j]]
+		for i in range(self.size):
+			for j in range(self.size):
+				cc[SLICE.R(0)] [i] [j] ["r"] = color_map[ r_slice[i][j] ]
 
-		for i in range(len(b_slice)):
-			for j in range(len(b_slice[i])):
-				cc[SLICE.B(0)][i][j]["b"] = ltn[b_slice[i][j]]
+		for i in range(self.size):
+			for j in range(self.size):
+				cc[SLICE.B(0)] [i] [j] ["b"] = color_map[ b_slice[i][j] ]
 
-		for i in range(len(d_slice)):
-			for j in range(len(d_slice[i])):
-				cc[SLICE.D(0)][i][j]["d"] = ltn[d_slice[i][j]]
+		for i in range(self.size):
+			for j in range(self.size):
+				cc[SLICE.D(0)] [i] [j] ["d"] = color_map[ d_slice[i][j] ]
 
 
 		for i in range(self.size):
@@ -109,10 +150,26 @@ class Cube:
 		# so we orient them correctly
 		for i in range(len(cube_slice)):
 			for j in range(len(cube_slice[i])):
-				cube_slice[i][j].pos[l[0]], cube_slice[i][j].pos[l[1]], cube_slice[i][j].pos[l[2]], cube_slice[i][j].pos[l[3]] =\
-				cube_slice[i][j].pos[r[0]], cube_slice[i][j].pos[r[1]], cube_slice[i][j].pos[r[2]], cube_slice[i][j].pos[r[3]]
+				cube_slice [i] [j] .pos[ l[0] ], \
+				cube_slice [i] [j] .pos[ l[1] ], \
+				cube_slice [i] [j] .pos[ l[2] ], \
+				cube_slice [i] [j] .pos[ l[3] ] = \
+				cube_slice [i] [j] .pos[ r[0] ], \
+				cube_slice [i] [j] .pos[ r[1] ], \
+				cube_slice [i] [j] .pos[ r[2] ], \
+				cube_slice [i] [j] .pos[ r[3] ]
 
+	# rotate up
 	def rotate_u(self, times_to_move=1, index_to_move=0):
+		"""
+		Rotate up slice
+			- times_to_move: The number of times to rotate the slice
+								+ve values rotates clockwise
+								-ve values rotates anticlockwise
+			- index_to_move: The slice index to move
+								0 rotates only the top most slice
+								1 rotates only the second slice
+		"""
 		times = times_to_move%(3+1)
 		self.path.append(("u", times))
 		cube_slice = self.cube[SLICE.U(index_to_move)]
@@ -124,7 +181,7 @@ class Cube:
 
 		self.orient_cubelets(cube_slice, "lbrf", aaa)
 		self.cube[SLICE.U(index_to_move)] = cube_slice
-		self.set_state()
+		self.load_state()
 
 	def rotate_d(self, times_to_move=1, index_to_move=0):
 		times = times_to_move%(3+1)
@@ -138,7 +195,7 @@ class Cube:
 
 		self.orient_cubelets(cube_slice, "rflb", bbb)
 		self.cube[SLICE.D(index_to_move)] = cube_slice
-		self.set_state()
+		self.load_state()
 
 	def rotate_l(self, times_to_move=1, index_to_move=0):
 		times = times_to_move%(3+1)
@@ -152,7 +209,7 @@ class Cube:
 
 		self.orient_cubelets(cube_slice, "dfub", bbb)
 		self.cube[SLICE.L(index_to_move)] = cube_slice
-		self.set_state()
+		self.load_state()
 
 	def rotate_r(self, times_to_move=1, index_to_move=0):
 		times = times_to_move%(3+1)
@@ -166,7 +223,7 @@ class Cube:
 
 		self.orient_cubelets(cube_slice, "ubdf", aaa)
 		self.cube[SLICE.R(index_to_move)] = cube_slice
-		self.set_state()
+		self.load_state()
 
 	def rotate_f(self, times_to_move=1, index_to_move=0):
 		times = times_to_move%(3+1)
@@ -180,7 +237,7 @@ class Cube:
 
 		self.orient_cubelets(cube_slice, "rdlu", aaa)
 		self.cube[SLICE.F(index_to_move)] = cube_slice
-		self.set_state()
+		self.load_state()
 
 	def rotate_b(self, times_to_move=1, index_to_move=0):
 		times = times_to_move%(3+1)
@@ -194,9 +251,40 @@ class Cube:
 
 		self.orient_cubelets(cube_slice, "lurd", bbb)
 		self.cube[SLICE.B(index_to_move)] = cube_slice
-		self.set_state()
+		self.load_state()
+
+	def rotate(self, moves):
+		moves = moves.lower()
+		moves = moves.split(" ")
+		for move in moves:
+			if move == "u":
+				self.rotate_u()
+			elif move == "u'":
+				self.rotate_u(times_to_move=-1)
+			elif move == "l":
+				self.rotate_l()
+			elif move == "l'":
+				self.rotate_l(times_to_move=-1)
+			elif move == "f":
+				self.rotate_f()
+			elif move == "f'":
+				self.rotate_f(times_to_move=-1)
+			elif move == "r":
+				self.rotate_r()
+			elif move == "r'":
+				self.rotate_r(times_to_move=-1)
+			elif move == "b":
+				self.rotate_b()
+			elif move == "b'":
+				self.rotate_b(times_to_move=-1)
+			elif move == "d":
+				self.rotate_d()
+			elif move == "d'":
+				self.rotate_d(times_to_move=-1)
 
 	def rotate_all_u(self, times_to_move=1):
+		# basically changing the orientation of the cube
+		# rotating each slice of the cube the number of times specified
 		for i in range(self.size):
 			self.rotate_u(times_to_move=times_to_move, index_to_move=i)
 
@@ -255,6 +343,9 @@ class Cube:
 		return orr
 
 	def to_string(self):
+		"""
+		Returns a string representation of the cube
+		"""
 		rep = ""
 		for i in range(self.size):
 			rep += " "*(self.size+1) + "|"
