@@ -2,7 +2,6 @@
 Implements a Cube and movements at Cubie level
 '''
 import random
-from past.builtins import basestring
 from copy import deepcopy
 from .Move import Move
 from .NaiveCube import NaiveCube
@@ -25,7 +24,7 @@ class Sticker(object):
         return self.__repr__()
 
     def __lt__(self, o):
-        if isinstance(o, basestring):
+        if isinstance(o, str):
             return self.color.upper() < o.upper()
         elif isinstance(o, Sticker):
             return self.color.upper() < o.color.upper()
@@ -33,7 +32,7 @@ class Sticker(object):
             raise TypeError("Don't know how to compare Sticker with %s" % o.__class__.__name__)
 
     def __gt__(self, o):
-        if isinstance(o, basestring):
+        if isinstance(o, str):
             return self.color.upper() > o.upper()
         elif isinstance(o, Sticker):
             return self.color.upper() > o.color.upper()
@@ -47,7 +46,7 @@ class Sticker(object):
         return (self > o) or (self == o)
 
     def __eq__(self, o):
-        if isinstance(o, basestring):
+        if isinstance(o, str):
             return o.upper() == self.color.upper()
         elif isinstance(o, Sticker):
             return o.color.upper() == self.color.upper()

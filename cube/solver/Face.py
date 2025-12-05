@@ -1,4 +1,3 @@
-from past.builtins import basestring
 import math
 import re
 
@@ -11,7 +10,7 @@ class Face(object):
 
         if init:
             init = init.replace(' ', '')
-            if check and not isinstance(init, (str, basestring)):
+            if check and not isinstance(init, (str, str)):
                 raise ValueError("Init configuration must be a string")
 
             if check and int(math.sqrt(len(init))) != math.sqrt(len(init)):

@@ -1,4 +1,3 @@
-from past.builtins import basestring
 import re
 
 
@@ -51,7 +50,7 @@ class Move(object):
         return Move(self.face + ("'" if self.clockwise else "2" if self.double else ""))
 
     def __eq__(self, move):
-        if isinstance(move, (str, basestring)):
+        if isinstance(move, (str, str)):
             return self.raw == move.upper()
         elif isinstance(move, Move):
             return self.raw == move.raw
@@ -68,7 +67,7 @@ class Move(object):
         return not self == move
 
     def __add__(self, move):
-        if isinstance(move, (str, basestring)):
+        if isinstance(move, (str, str)):
             return self + Move(move)
         elif move is None:
             return self
