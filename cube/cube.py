@@ -170,9 +170,10 @@ class Cube:
 								0 rotates only the top most slice
 								1 rotates only the second slice
 		"""
-		times = times_to_move%(3+1)
+		times = times_to_move % (3+1)
+		index = index_to_move
 		self.path.append(("u", times))
-		cube_slice = self.cube[SLICE.U(index_to_move)]
+		cube_slice = self.cube[SLICE.U(index)]
 		cube_slice = np.rot90(cube_slice, k=times)
 
 		aaa = "lbrf"
@@ -180,13 +181,14 @@ class Cube:
 			aaa = aaa[-1] + aaa[:3]
 
 		self.orient_cubelets(cube_slice, "lbrf", aaa)
-		self.cube[SLICE.U(index_to_move)] = cube_slice
+		self.cube[SLICE.U(index)] = cube_slice
 		self.load_state()
 
 	def rotate_d(self, times_to_move=1, index_to_move=0):
-		times = times_to_move%(3+1)
+		times = times_to_move % (3+1)
+		index = index_to_move
 		self.path.append(("d", times))
-		cube_slice = self.cube[SLICE.D(index_to_move)]
+		cube_slice = self.cube[SLICE.D(index)]
 		cube_slice = np.rot90(cube_slice, k=times, axes=(1,0))
 
 		bbb = "rflb"
@@ -194,13 +196,14 @@ class Cube:
 			bbb = bbb[1:] + bbb[0]
 
 		self.orient_cubelets(cube_slice, "rflb", bbb)
-		self.cube[SLICE.D(index_to_move)] = cube_slice
+		self.cube[SLICE.D(index)] = cube_slice
 		self.load_state()
 
 	def rotate_l(self, times_to_move=1, index_to_move=0):
-		times = times_to_move%(3+1)
+		times = times_to_move % (3+1)
+		index = index_to_move
 		self.path.append(("l", times))
-		cube_slice = self.cube[SLICE.L(index_to_move)]
+		cube_slice = self.cube[SLICE.L(index)]
 		cube_slice = np.rot90(cube_slice, k=times, axes=(1,0))
 
 		bbb = "dfub"
@@ -208,13 +211,14 @@ class Cube:
 			bbb = bbb[1:] + bbb[0]
 
 		self.orient_cubelets(cube_slice, "dfub", bbb)
-		self.cube[SLICE.L(index_to_move)] = cube_slice
+		self.cube[SLICE.L(index)] = cube_slice
 		self.load_state()
 
 	def rotate_r(self, times_to_move=1, index_to_move=0):
-		times = times_to_move%(3+1)
+		times = times_to_move % (3+1)
+		index = index_to_move
 		self.path.append(("r", times))
-		cube_slice = self.cube[SLICE.R(index_to_move)]
+		cube_slice = self.cube[SLICE.R(index)]
 		cube_slice = np.rot90(cube_slice, k=times)
 
 		aaa = "ubdf"
@@ -222,13 +226,14 @@ class Cube:
 			aaa = aaa[-1] + aaa[:3]
 
 		self.orient_cubelets(cube_slice, "ubdf", aaa)
-		self.cube[SLICE.R(index_to_move)] = cube_slice
+		self.cube[SLICE.R(index)] = cube_slice
 		self.load_state()
 
 	def rotate_f(self, times_to_move=1, index_to_move=0):
-		times = times_to_move%(3+1)
+		times = times_to_move % (3+1)
+		index = index_to_move
 		self.path.append(("f", times))
-		cube_slice = self.cube[SLICE.F(index_to_move)]
+		cube_slice = self.cube[SLICE.F(index)]
 		cube_slice = np.rot90(cube_slice, k=times, axes=(1,0))
 
 		aaa = "rdlu"
@@ -236,13 +241,14 @@ class Cube:
 			aaa = aaa[-1] + aaa[:3]
 
 		self.orient_cubelets(cube_slice, "rdlu", aaa)
-		self.cube[SLICE.F(index_to_move)] = cube_slice
+		self.cube[SLICE.F(index)] = cube_slice
 		self.load_state()
 
 	def rotate_b(self, times_to_move=1, index_to_move=0):
-		times = times_to_move%(3+1)
+		times = times_to_move % (3+1)
+		index = index_to_move
 		self.path.append(("b", times))
-		cube_slice = self.cube[SLICE.B(index_to_move)]
+		cube_slice = self.cube[SLICE.B(index)]
 		cube_slice = np.rot90(cube_slice, k=times)
 
 		bbb = "lurd"
@@ -250,7 +256,7 @@ class Cube:
 			bbb = bbb[1:] + bbb[0]
 
 		self.orient_cubelets(cube_slice, "lurd", bbb)
-		self.cube[SLICE.B(index_to_move)] = cube_slice
+		self.cube[SLICE.B(index)] = cube_slice
 		self.load_state()
 
 	def rotate(self, moves):
