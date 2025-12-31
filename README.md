@@ -19,7 +19,7 @@ pip install numpy attridict
 ## Quick Start
 
 ### Create a Cube
-```
+```python
 from cube.cube import Cube
 
 cube = Cube()        # Default 3x3 solved cube
@@ -27,7 +27,7 @@ cube2 = Cube(size=2) # 2x2 cube
 ```
 
 ### Initialize from a state string
-```
+```python
 state = "yyyyyyyyybbbbbbbbbrrrrrrrrrgggggggggooooooooowwwwwwwww"
 cube = Cube(size=3, state=state)
 ```
@@ -57,12 +57,12 @@ Each face is written row-by-row.
 
 
 ## Visualizing the Cube
-```
+```python
 print(cube)
 ```
 
 Example output (3×3):
-```
+```python
     |yyy|
     |yyy|
     |yyy|
@@ -76,7 +76,7 @@ Example output (3×3):
 
 ## Performing Rotations
 ### Using Standard Notation
-```
+```python
 cube.rotate("u")
 cube.rotate("r'")
 cube.rotate("f2")
@@ -89,7 +89,7 @@ Supported notation:
 - `2` - double turn
 
 ## Multiple Moves
-```
+```python
 cube.rotate("r u r' u'")
 ```
 
@@ -100,7 +100,7 @@ Moves are space-separated, case-insensitive.
 
 Each face has a corresponding method:
 
-```
+```python
 cube.rotate_u()
 cube.rotate_d()
 cube.rotate_l()
@@ -111,7 +111,7 @@ cube.rotate_b()
 
 With parameters:
 
-```
+```python
 cube.rotate_u(times_to_move=2)      # U2
 cube.rotate_r(times_to_move=-1)     # R'
 cube.rotate_f(index_to_move=1)      # Inner slice (NxN)
@@ -120,7 +120,7 @@ cube.rotate_f(index_to_move=1)      # Inner slice (NxN)
 ## Whole-Cube Rotations
 
 Rotate the entire cube along an axis:
-```
+```python
 cube.rotate_all_u()
 cube.rotate_all_r(times_to_move=2)
 cube.rotate_all_f(times_to_move=-1)
@@ -129,7 +129,7 @@ cube.rotate_all_f(times_to_move=-1)
 Useful for changing cube orientation without altering relative state.
 
 ## Checking if the Cube Is Solved
-```
+```python
 cube.solved()
 ```
 Returns True if all faces are uniform (orientation-independent).
@@ -138,18 +138,18 @@ Returns True if all faces are uniform (orientation-independent).
 ## Move History
 
 Every rotation is recorded:
-```
+```python
 cube.path
 ```
 Example:
-```
+```python
 [('r', 1), ('u', 1), ('r', 3), ('u', 3)]
 ```
 
 Equality between cubes (`cube1 == cube2`) compares state only, not move history.
 
 ## Copying a Cube
-```
+```python
 cube_copy = cube.copy()
 ```
 
@@ -158,12 +158,12 @@ Creates a deep copy, so the two cubes are completely independent.
 ## Accessing Faces Programmatically
 
 You can extract faces using:
-```
+```python
 faces = cube.group_sides()
 ```
 
 Returns a dictionary:
-```
+```python
 {
   "u": [...],
   "d": [...],
@@ -177,12 +177,12 @@ Each face is a 2D array of color letters.
 
 ## Cubelets
 Internally, the cube is made of Cubelets, each tracking its orientation:
-```
+```python
 cube.cube[x][y][z].pos
 ```
 
 Example cubelet position:
-```
+```python
 {
   "u": "yellow",
   "d": None,
@@ -203,20 +203,20 @@ This makes the library suitable for:
 ### Slice Helpers
 
 The `SLICE` utility abstracts NumPy slicing:
-```
+```python
 from cube.constants import SLICE
 
 cube.cube[SLICE.U(0)]  # Top slice
 cube.cube[SLICE.F(1)]  # Inner front slice
 ```
 ## Example: Simple Scramble
-```
+```python
 cube = Cube()
 cube.rotate("r u r' u'")
 print(cube)
 ```
 ## Example: Random Scramble
-```
+```python
 import random
 
 moves = ["u", "u'", "u2", "r", "r'", "r2", "f", "f'", "f2"]
