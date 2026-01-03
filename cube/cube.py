@@ -6,7 +6,7 @@ import numpy as np
 
 from .cubelet import Cubelet
 from .constants import SLICE
-
+from .solver.utils import solve as solve_from_state
 
 class Cube:
 	def __init__(self, size=3, state=None):
@@ -39,6 +39,11 @@ class Cube:
 		return self.to_string()
 		# return str(self.path)
 		# return self.state
+
+	def solve(self, method="kociemba"):
+		solution_moves = solve_from_state(self.state, "kociemba")
+		solution = " ".join([str(move) for move in solution_moves])
+		return solution
 
 	def solved(self):
 		grouped_solution = sorted([i*(self.size**2) for i in "ybrgow"])

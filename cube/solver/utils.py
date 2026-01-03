@@ -8,9 +8,9 @@ from .Cubie import Cube
 from .Printer import TtyPrinter
 
 METHODS = {
-    'Beginner': Beginner.BeginnerSolver,
+    'beginner': Beginner.BeginnerSolver,
     'CFOP': CFOP.CFOPSolver,
-    'Kociemba': Kociemba.KociembaSolver
+    'kociemba': Kociemba.KociembaSolver
 }
 
 def _check_valid_cube(cube):
