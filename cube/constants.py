@@ -12,6 +12,9 @@ SLICES = {
 		"B": attridict({"slice_index_to_move": 0, "slice_to_move": -1}),
 	}
 
+ORIENTATION_LAYOUT = ["U", "D", "L", "R", "F", "B"]
+
+
 def twotwo(index, letter):
 	bbb = SLICES[letter]
 	

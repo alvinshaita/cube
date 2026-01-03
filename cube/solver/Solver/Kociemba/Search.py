@@ -1,10 +1,10 @@
 import time
 
-from cube.solver.Enums import Color
 import cube.solver.FaceCube as FaceCube
 import cube.solver.CoordCube as CoordCube
 from cube.solver.CubieCube import DupedEdge
 
+ORIENTATION_LAYOUT = ["U", "D", "L", "R", "F", "B"]
 
 class DupedFacelet(Exception):
     pass
@@ -95,16 +95,17 @@ class Search(object):
         *         Error 8: Timeout, no solution within given time
         '''
         # +++++++++++++++++++++check for wrong input ++++++++++++++++++++++++++
-        count = [0] * 6
+        orientation_counts = { o:0 for o in ORIENTATION_LAYOUT }
         try:
             for i in range(54):
-                count[getattr(Color, facelets[i])] += 1
+                orientation_counts[facelets[i]] += 1
+
         except Exception as e:
             raise DupedFacelet(
                 "There is not exactly one facelet of each colour")
 
-        for i in range(6):
-            if count[i] != 9:
+        for count in orientation_counts.values():
+            if count != 9:
                 raise DupedEdge("Not all 12 edges exist exactly once")
 
         cc = FaceCube.FaceCube(facelets).toCubieCube()
