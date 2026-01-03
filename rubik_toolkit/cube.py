@@ -41,7 +41,7 @@ class Cube:
 		# return self.state
 
 	def solve(self, method="kociemba"):
-		solution_moves = solve_from_state(self.state, "kociemba")
+		solution_moves = solve_from_state(self.state, method)
 		solution = " ".join([str(move) for move in solution_moves])
 		return solution
 

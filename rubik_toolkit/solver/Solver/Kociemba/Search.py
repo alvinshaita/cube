@@ -1,8 +1,8 @@
 import time
 
-import cube.solver.FaceCube as FaceCube
-import cube.solver.CoordCube as CoordCube
-from cube.solver.CubieCube import DupedEdge
+import rubik_toolkit.solver.FaceCube as FaceCube
+import rubik_toolkit.solver.CoordCube as CoordCube
+from rubik_toolkit.solver.CubieCube import DupedEdge
 
 ORIENTATION_LAYOUT = ["U", "D", "L", "R", "F", "B"]
 
