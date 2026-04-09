@@ -3,3 +3,4 @@ cube.egg-info
 *.nt
 *.vc
 __pycache__
+sandbox*
