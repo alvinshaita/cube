@@ -40,7 +40,7 @@ class Cube:
 		# return str(self.path)
 		# return self.state
 
-	def solve(self, method="kociemba"):
+	def solve(self, method="brute_force"):
 		solution_moves = solve_from_state(self.state, method)
 		solution = " ".join([str(move) for move in solution_moves])
 		return solution
