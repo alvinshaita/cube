@@ -4,3 +4,6 @@ cube.egg-info
 *.vc
 __pycache__
 sandbox*
+
+# Kociemba pruning tables are generated on first use; never checked in.
+rubik_toolkit/solver/kociemba/_tables/
