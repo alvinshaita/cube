@@ -100,12 +100,13 @@ def _make_move(cp, co, ep, eo):
 
 # Quarter-turn move generators in source convention.
 #
-# U: corner cycle URF->UBR->ULB->UFL->URF; edge cycle UR->UB->UL->UF->UR.
-#    No orientation change (U/D turns preserve both co and eo).
+# U: clockwise from above. Corner cycle URF->UFL->ULB->UBR->URF;
+#    edge cycle UR->UF->UL->UB->UR. No orientation change
+#    (U/D turns preserve both co and eo).
 _MOVE_U = _make_move(
-	cp=[UFL, ULB, UBR, URF, DFR, DLF, DBL, DRB],
+	cp=[UBR, URF, UFL, ULB, DFR, DLF, DBL, DRB],
 	co=[0, 0, 0, 0, 0, 0, 0, 0],
-	ep=[UF, UL, UB, UR, DR, DF, DL, DB, FR, FL, BL, BR],
+	ep=[UB, UR, UF, UL, DR, DF, DL, DB, FR, FL, BL, BR],
 	eo=[0] * 12,
 )
 
@@ -127,12 +128,12 @@ _MOVE_F = _make_move(
 	eo=[0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0],
 )
 
-# D: corner cycle DFR->DLF->DBL->DRB->DFR; edge cycle DR->DF->DL->DB->DR.
-#    No orientation change.
+# D: clockwise from below. Corner cycle DFR->DRB->DBL->DLF->DFR;
+#    edge cycle DR->DB->DL->DF->DR. No orientation change.
 _MOVE_D = _make_move(
-	cp=[URF, UFL, ULB, UBR, DRB, DFR, DLF, DBL],
+	cp=[URF, UFL, ULB, UBR, DLF, DBL, DRB, DFR],
 	co=[0, 0, 0, 0, 0, 0, 0, 0],
-	ep=[UR, UF, UL, UB, DB, DR, DF, DL, FR, FL, BL, BR],
+	ep=[UR, UF, UL, UB, DF, DL, DB, DR, FR, FL, BL, BR],
 	eo=[0] * 12,
 )
 
