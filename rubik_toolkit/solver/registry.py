@@ -1,10 +1,12 @@
 from .brute_force import BruteForceSolver
+from .kociemba import KociembaSolver
 
 
 # Registry of available solving strategies. Adding a new strategy is
 # just a matter of implementing BaseSolver and listing it here.
 SOLVERS = {
 	"brute_force": BruteForceSolver,
+	"kociemba": KociembaSolver,
 }
 
 
