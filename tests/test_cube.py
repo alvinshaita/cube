@@ -692,3 +692,167 @@ class TestCube2x2:
         c.rotate("r u r' f'")
         for colour in "ybrgow":
             assert c.state.count(colour) == 4
+
+
+# ---------------------------------------------------------------------------
+# Partial / unknown-sticker cubes
+# ---------------------------------------------------------------------------
+
+class TestUnknownStickers:
+    """A Cube may be constructed from a state where some stickers are '?',
+    meaning the colour at that position is unknown (e.g. when scanning a
+    physical cube where some faces are occluded). Rotations still work;
+    solving is rejected."""
+
+    def test_all_unknown_3x3_constructs(self):
+        c = Cube(state="?" * 54)
+        assert c.state == "?" * 54
+        assert len(c.state) == 54
+
+    def test_all_unknown_2x2_constructs(self):
+        c = Cube(size=2, state="?" * 24)
+        assert c.state == "?" * 24
+
+    def test_partial_state_roundtrips(self):
+        """Parsing into the cube array and reading back must preserve '?'s."""
+        state = "yyy?yyyyy" + "b" * 9 + "rrr???rrr" + "g" * 9 + "o" * 9 + "w" * 9
+        c = Cube(state=state)
+        assert c.state == state
+
+    def test_unknown_char_maps_to_unknown_color_name(self):
+        """'?' in the state string becomes the string 'unknown' on the cubelet."""
+        state = "?" + "y" * 8 + "b" * 9 + "r" * 9 + "g" * 9 + "o" * 9 + "w" * 9
+        c = Cube(state=state)
+        exposed_u_colors = [c.cube[1][0][k].pos["u"] for k in range(3)] + \
+                           [c.cube[i][0][k].pos["u"] for i in range(3) for k in range(3)]
+        # At least one 'unknown' must appear somewhere on the U face.
+        assert any(v == "unknown" for v in exposed_u_colors)
+
+    def test_none_still_means_not_exposed(self):
+        """'?' != None — 'unknown' is an exposed-but-unknown sticker,
+        None remains 'this face is interior / not exposed'. The interior
+        cubelet on a 3x3 must still have all-None pos even when the
+        whole cube state is unknown."""
+        c = Cube(state="?" * 54)
+        inner = c.cube[1][1][1]
+        assert all(v is None for v in inner.pos.values())
+
+    def test_invalid_character_raises(self):
+        with pytest.raises(AssertionError):
+            Cube(state="x" * 54)
+
+    def test_multiple_invalid_characters_raise(self):
+        with pytest.raises(AssertionError):
+            Cube(state="xyz" * 18)
+
+    def test_empty_state_falls_back_to_default(self):
+        """An empty string is falsy, so __init__ falls back to default_state.
+        Pre-existing quirk of the Cube constructor — pinned here so a
+        future refactor doesn't silently change it."""
+        c = Cube(state="")
+        assert c.state == SOLVED_STATE_3X3
+
+
+class TestIsComplete:
+    def test_solved_cube_is_complete(self):
+        assert Cube().is_complete()
+
+    def test_scrambled_cube_is_complete(self):
+        c = Cube()
+        c.rotate("r u r' u'")
+        assert c.is_complete()
+
+    def test_all_unknown_is_not_complete(self):
+        assert not Cube(state="?" * 54).is_complete()
+
+    def test_single_unknown_is_not_complete(self):
+        state = "?" + "y" * 8 + "b" * 9 + "r" * 9 + "g" * 9 + "o" * 9 + "w" * 9
+        assert not Cube(state=state).is_complete()
+
+    def test_is_complete_after_rotation_of_partial_stays_false(self):
+        """Rotation permutes stickers — it can't turn '?'s into known colours."""
+        c = Cube(state="?" * 54)
+        c.rotate("r u r' u'")
+        assert not c.is_complete()
+
+
+class TestSolvedWithUnknowns:
+    def test_all_unknown_is_not_solved(self):
+        assert not Cube(state="?" * 54).solved()
+
+    def test_partial_cube_is_not_solved_even_if_known_stickers_match(self):
+        """The known stickers happen to match a solved cube, but unknown
+        presence alone is enough to return False."""
+        state = list("y" * 9 + "b" * 9 + "r" * 9 + "g" * 9 + "o" * 9 + "w" * 9)
+        state[0] = "?"
+        c = Cube(state="".join(state))
+        assert not c.solved()
+
+
+class TestSolveWithUnknowns:
+    def test_solve_raises_on_partial_cube(self):
+        c = Cube(state="?" * 54)
+        with pytest.raises(ValueError, match="unknown stickers"):
+            c.solve()
+
+    def test_solve_raises_on_single_unknown(self):
+        state = "?" + "y" * 8 + "b" * 9 + "r" * 9 + "g" * 9 + "o" * 9 + "w" * 9
+        c = Cube(state=state)
+        with pytest.raises(ValueError):
+            c.solve()
+
+    def test_solve_error_message_mentions_count(self):
+        c = Cube(state="?" * 54)
+        with pytest.raises(ValueError, match="54"):
+            c.solve()
+
+
+class TestRotateWithUnknowns:
+    """Rotations are pure permutations; they must move '?'s exactly like
+    any other sticker, and preserve the count of unknowns."""
+
+    def test_rotate_preserves_unknown_count(self):
+        state = "yyy?yyyyy" + "b" * 9 + "rrr?rrrrr" + "g" * 9 + "o" * 9 + "w" * 9
+        c = Cube(state=state)
+        before = c.state.count("?")
+        c.rotate("u r u' r'")
+        assert c.state.count("?") == before
+
+    def test_rotate_all_unknown_stays_all_unknown(self):
+        c = Cube(state="?" * 54)
+        c.rotate("r u r' u' r' f r2 u' r' u' r u r' f'")
+        assert c.state == "?" * 54
+
+    def test_inverse_sequence_restores_partial_state(self):
+        """Same invariant the solved cube has — seq then inverse(seq) restores."""
+        state = "yyy?yyyyy" + "bbb???bbb" + "r" * 9 + "g" * 9 + "o" * 9 + "w" * 9
+        c = Cube(state=state)
+        c.rotate("r u r' u'")
+        c.rotate(invert_sequence("r u r' u'"))
+        assert c.state == state
+
+    def test_rotation_permutes_but_does_not_invent_colors(self):
+        """Every sticker character in the post-rotation state must have
+        existed in the pre-rotation state (as a multiset)."""
+        state = "yyy?yyyyy" + "b" * 9 + "r" * 9 + "g" * 9 + "o" * 9 + "w" * 9
+        c = Cube(state=state)
+        before = sorted(c.state)
+        c.rotate("r u r' u'")
+        after = sorted(c.state)
+        assert before == after
+
+
+class TestGroupSidesWithUnknowns:
+    def test_group_sides_renders_unknown_as_question_mark(self):
+        state = "?" + "y" * 8 + "b" * 9 + "r" * 9 + "g" * 9 + "o" * 9 + "w" * 9
+        c = Cube(state=state)
+        gs = c.group_sides()
+        flat_u = [cell for row in gs["u"] for cell in row]
+        assert "?" in flat_u
+
+    def test_all_unknown_group_sides(self):
+        c = Cube(state="?" * 54)
+        gs = c.group_sides()
+        for face, grid in gs.items():
+            for row in grid:
+                assert all(cell == "?" for cell in row)
