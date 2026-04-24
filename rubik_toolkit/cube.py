@@ -59,6 +59,16 @@ class Cube:
 		"""True iff every sticker position has a known colour."""
 		return UNKNOWN_CHAR not in self.state
 
+	def is_valid(self):
+		"""True iff this state is reachable from solved via legal face moves.
+
+		Thin wrapper around :func:`rubik_toolkit.validation.is_state_valid`.
+		Checks physical piece validity, canonical centre positions (3×3),
+		corner chirality, and solvability parity invariants.
+		"""
+		from .validation import is_state_valid
+		return is_state_valid(self.state, self.size)
+
 	def solved(self):
 		if not self.is_complete():
 			return False
