@@ -69,6 +69,26 @@ class Cube:
 		from .validation import is_state_valid
 		return is_state_valid(self.state, self.size)
 
+	def possible_states(self, limit=None):
+		"""Yield every colour-count-valid completion of this cube's state.
+
+		Thin wrapper around :func:`rubik_toolkit.completions.possible_states`.
+		Yields state strings (not Cube instances). On a complete cube,
+		yields a single string equal to ``self.state``.
+		"""
+		from .completions import possible_states
+		yield from possible_states(self.state, self.size, limit=limit)
+
+	def count_possible_states(self):
+		"""Count of colour-count-valid completions of this cube's state.
+
+		Thin wrapper around
+		:func:`rubik_toolkit.completions.count_possible_states`. O(1) via
+		the multinomial coefficient — safe to call for any state size.
+		"""
+		from .completions import count_possible_states
+		return count_possible_states(self.state, self.size)
+
 	def solved(self):
 		if not self.is_complete():
 			return False
