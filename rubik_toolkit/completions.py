@@ -1,75 +1,48 @@
-"""Generate possible complete states from a state with unknown stickers.
+"""Generate possible valid states from a state with unknown stickers.
 
 Exports:
 
-- ``possible_states(state, size=None, limit=None)`` — pure generator that
-  yields every colour-count-valid completion of ``state`` (each '?' filled
-  with a colour such that every face colour appears exactly size² times).
-  Yields state strings, not Cube instances. ``size`` is inferred from
-  ``len(state)`` when omitted; ``limit`` caps the number yielded.
-- ``count_possible_states(state, size=None)`` — O(1) multinomial count
-  without enumerating; returns 0 if the state is over-counted in any
-  colour.
+- ``possible_states(state, size=None, limit=None)`` — generator yielding
+  every state that matches the partial input AND is valid per
+  ``is_state_valid`` (physical pieces, canonical centres on 3×3, corner
+  chirality, and solvability parity). Yields state strings, not Cube
+  instances. ``size`` is inferred from ``len(state)`` when omitted;
+  ``limit`` caps the number of valid states yielded.
+- ``count_possible_states(state, size=None)`` — count of valid states
+  matching the partial input. Implemented by enumeration: O(N) where N
+  is the colour-count-valid completion space, which can be huge for
+  highly partial inputs.
 
-A "colour-count-valid" completion does NOT guarantee physical validity or
-solvability — wrap with ``is_state_valid`` to filter further. The all-
-unknown 3×3 has ~10³³ completions, so ``limit`` is essential for any
-state with many unknowns.
+Filtering is applied at the leaf of the enumeration: every '?' position
+is filled in turn (respecting colour counts), and the resulting candidate
+is checked with ``is_state_valid``. Candidates that fail are silently
+skipped. For sparse inputs (many unknowns) the search may iterate many
+internal candidates before yielding each valid one.
 
-``Cube.possible_states`` is a thin wrapper around ``possible_states``.
+``Cube.possible_states`` and ``Cube.count_possible_states`` are thin
+wrappers around these functions.
 """
-import math
 from collections import Counter
 
-from .validation import infer_size
+from .validation import infer_size, is_state_valid
 
 
 UNKNOWN_CHAR = "?"
 _COLOR_CHARS = "ybrgow"
 
 
-def count_possible_states(state, size=None):
-	"""Number of colour-count-valid completions of ``state``.
-
-	Computed in O(1) via the multinomial coefficient
-	N! / (d_y! d_b! d_r! d_g! d_o! d_w!), where d_c is the deficit
-	(target − current count) of each colour. Returns 0 if any colour is
-	already over-counted.
-	"""
-	state = state.lower()
-	if size is None:
-		size = infer_size(state)
-	if len(state) != 6 * size * size:
-		raise ValueError(
-			f"state length {len(state)} does not match size {size}"
-		)
-
-	if UNKNOWN_CHAR not in state:
-		# Already complete — itself is the only completion (we don't
-		# validate colour counts here; that's is_state_valid's job).
-		return 1
-
-	target = size * size
-	deficits = [target - state.count(c) for c in _COLOR_CHARS]
-	if any(d < 0 for d in deficits):
-		return 0
-	n = sum(deficits)
-	result = math.factorial(n)
-	for d in deficits:
-		result //= math.factorial(d)
-	return result
-
-
 def possible_states(state, size=None, limit=None):
-	"""Yield every colour-count-valid completion of ``state``.
+	"""Yield every valid state matching the partial ``state``.
 
-	Each yielded value is a complete state string with the '?' positions
-	filled so that every colour appears exactly size² times. Order is
-	deterministic (lexicographic over the unknown positions).
+	A "valid state" is one that passes :func:`is_state_valid` — colour
+	counts balance, every cubelet is a real piece in canonical chirality,
+	centres (3×3) are in their fixed positions, and parity invariants
+	hold. The '?' positions in ``state`` are filled with colours; known
+	stickers are preserved.
 
 	``size`` is inferred from ``len(state)`` when omitted. ``limit`` caps
-	the number yielded — set it whenever the deficit-sum is large; an
-	all-unknown 3×3 has ~10³³ completions.
+	the number of valid states yielded (not the number of candidates
+	considered).
 	"""
 	state = state.lower()
 	if size is None:
@@ -83,7 +56,8 @@ def possible_states(state, size=None, limit=None):
 		return
 
 	if UNKNOWN_CHAR not in state:
-		yield state
+		if is_state_valid(state, size):
+			yield state
 		return
 
 	target = size * size
@@ -103,8 +77,10 @@ def possible_states(state, size=None, limit=None):
 	def recurse(pos_idx):
 		nonlocal yielded
 		if pos_idx == len(unknown_positions):
-			yield "".join(state_chars)
-			yielded += 1
+			candidate = "".join(state_chars)
+			if is_state_valid(candidate, size):
+				yield candidate
+				yielded += 1
 			return
 		pos = unknown_positions[pos_idx]
 		for c in sorted_colors:
@@ -122,3 +98,21 @@ def possible_states(state, size=None, limit=None):
 		yield completion
 		if limit is not None and yielded >= limit:
 			return
+
+
+def count_possible_states(state, size=None):
+	"""Count valid states matching the partial ``state``.
+
+	Implemented by enumerating ``possible_states`` and counting — O(N)
+	where N is the size of the colour-count-valid completion space.
+	For inputs with many unknowns this can be expensive; consider
+	whether the count is actually needed before calling.
+	"""
+	state = state.lower()
+	if size is None:
+		size = infer_size(state)
+	if len(state) != 6 * size * size:
+		raise ValueError(
+			f"state length {len(state)} does not match size {size}"
+		)
+	return sum(1 for _ in possible_states(state, size))
