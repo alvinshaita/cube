@@ -377,6 +377,23 @@ class Cube:
 		for i in range(self.size):
 			self.rotate_b(times_to_move=times_to_move, index_to_move=i)
 
+	def rotate_all(self, moves):
+		moves = moves.lower()
+		moves = moves.split(" ")
+		for move in moves:
+			if move == "u":
+				self.rotate_all_u()
+			elif move == "l":
+				self.rotate_all_l()
+			elif move == "f":
+				self.rotate_all_f()
+			elif move == "r":
+				self.rotate_all_r()
+			elif move == "b":
+				self.rotate_all_b()
+			elif move == "d":
+				self.rotate_all_d()
+
 	def group_sides(self):
 		# group sides based on direction and in an order that is easily comprehesible in 2d representation
 		orr = {"f": [], "b": [], "u": [], "d": [], "l": [], "r": []}
