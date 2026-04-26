@@ -8,6 +8,9 @@ from .cubelet import Cubelet
 from .constants import SLICE
 from .solver.utils import solve as solve_from_state
 
+UNKNOWN_CHAR = "?"
+VALID_STATE_CHARS = set("ybrgow" + UNKNOWN_CHAR)
+
 class Cube:
 	def __init__(self, size=3, state=None):
 		self.path = []
@@ -17,6 +20,8 @@ class Cube:
 		self.state = state.lower() if state else self.default_state
 
 		assert(len(self.state) == (self.size**2)*6)
+		invalid = set(self.state) - VALID_STATE_CHARS
+		assert not invalid, f"invalid state characters: {sorted(invalid)} (allowed: {sorted(VALID_STATE_CHARS)})"
 		self.generate_cube()
 
 	def load_state(self):
@@ -41,11 +46,52 @@ class Cube:
 		# return self.state
 
 	def solve(self, method="brute_force"):
+		if not self.is_complete():
+			raise ValueError(
+				"cannot solve a cube with unknown stickers — "
+				f"{self.state.count(UNKNOWN_CHAR)} '{UNKNOWN_CHAR}' in state"
+			)
 		solution_moves = solve_from_state(self.state, method)
 		solution = " ".join([str(move) for move in solution_moves])
 		return solution
 
+	def is_complete(self):
+		"""True iff every sticker position has a known colour."""
+		return UNKNOWN_CHAR not in self.state
+
+	def is_valid(self):
+		"""True iff this state is reachable from solved via legal face moves.
+
+		Thin wrapper around :func:`rubik_toolkit.validation.is_state_valid`.
+		Checks physical piece validity, canonical centre positions (3×3),
+		corner chirality, and solvability parity invariants.
+		"""
+		from .validation import is_state_valid
+		return is_state_valid(self.state, self.size)
+
+	def possible_states(self, limit=None):
+		"""Yield every colour-count-valid completion of this cube's state.
+
+		Thin wrapper around :func:`rubik_toolkit.completions.possible_states`.
+		Yields state strings (not Cube instances). On a complete cube,
+		yields a single string equal to ``self.state``.
+		"""
+		from .completions import possible_states
+		yield from possible_states(self.state, self.size, limit=limit)
+
+	def count_possible_states(self):
+		"""Count of colour-count-valid completions of this cube's state.
+
+		Thin wrapper around
+		:func:`rubik_toolkit.completions.count_possible_states`. O(1) via
+		the multinomial coefficient — safe to call for any state size.
+		"""
+		from .completions import count_possible_states
+		return count_possible_states(self.state, self.size)
+
 	def solved(self):
+		if not self.is_complete():
+			return False
 		grouped_solution = sorted([i*(self.size**2) for i in "ybrgow"])
 		grouped_state = sorted(re.findall("."*(self.size**2), self.state))
 		return grouped_solution == grouped_state
@@ -108,7 +154,7 @@ class Cube:
 
 
 		# letter to map to color name
-		color_map = {"y": "yellow", "r": "red", "g": "green", "o": "orange", "b": "blue", "w": "white"}
+		color_map = {"y": "yellow", "r": "red", "g": "green", "o": "orange", "b": "blue", "w": "white", UNKNOWN_CHAR: "unknown"}
 
 		cc = [[[
 			{}
@@ -336,8 +382,7 @@ class Cube:
 		orr = {"f": [], "b": [], "u": [], "d": [], "l": [], "r": []}
 
 		# name to letter
-		# ntl = {"yellow": "y", "red": "r", "green": "g", "orange": "o", "blue": "b", "white": "w", None: " "}
-		ntl = {"yellow": "y", "red": "r", "green": "g", "orange": "o", "blue": "b", "white": "w"}
+		ntl = {"yellow": "y", "red": "r", "green": "g", "orange": "o", "blue": "b", "white": "w", "unknown": UNKNOWN_CHAR}
 
 
 		f_slice = self.cube[SLICE.F(0)]
