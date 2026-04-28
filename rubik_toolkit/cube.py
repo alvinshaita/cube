@@ -89,6 +89,16 @@ class Cube:
 		from .completions import count_possible_states
 		return count_possible_states(self.state, self.size)
 
+	def normalize(self):
+		"""Return a new Cube rotated to canonical orientation.
+
+		Thin wrapper around :func:`rubik_toolkit.normalization.normalize_state`.
+		Two cubes that are physically the same but oriented differently
+		produce equal cubes (and equal state strings) after normalization.
+		"""
+		from .normalization import normalize_state
+		return Cube(size=self.size, state=normalize_state(self.state, self.size))
+
 	def solved(self):
 		if not self.is_complete():
 			return False
