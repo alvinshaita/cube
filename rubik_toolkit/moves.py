@@ -2,19 +2,18 @@
 
 Exports:
 
-- ``summarize_moves(moves)`` — reduce a sequence of cube moves to its
-  shortest equivalent by merging *adjacent* same-face moves mod 4:
+- ``summarize_moves(moves, compact=False)`` — drop cancelling moves from
+  a sequence.
 
-      u u   →  u2
-      u u u →  u'
-      u u u u → (empty)
-      u u'  →  (empty)
-      u r r' u' → (empty)        # cascades resolve
+  - Default behaviour: preserve every input token unchanged unless a
+    contiguous same-face streak sums to identity (count mod 4 == 0), in
+    which case the whole streak is dropped. ``"u u"`` stays ``"u u"``
+    because it isn't identity; ``"u u u u"`` and ``"u u'"`` cancel.
+  - ``compact=True``: additionally merge adjacent same-face moves into
+    shorthand notation. ``"u u"`` → ``"u2"``; ``"u u u"`` → ``"u'"``.
 
-  Different faces don't commute on a Rubik's cube, so ``u r u'`` stays
-  ``u r u'`` — only adjacent same-face moves are merged. The reduction
-  is greedy and iterative via a stack, so any cascade of cancellations
-  resolves in a single pass.
+  Different faces never merge (no commutativity assumed), but cascades
+  of cancellations resolve naturally — ``"u r r' u'"`` → ``""``.
 """
 
 _FACES = frozenset("udlrfb")
@@ -37,7 +36,7 @@ def _parse(token):
 	return face, count
 
 
-def _format(face, count):
+def _format_compact(face, count):
 	if count == 1:
 		return face
 	if count == 2:
@@ -47,28 +46,47 @@ def _format(face, count):
 	raise ValueError(f"unexpected count: {count}")
 
 
-def summarize_moves(moves):
-	"""Reduce a move sequence to its shortest equivalent form.
+def summarize_moves(moves, compact=False):
+	"""Drop cancelling moves from a sequence.
 
-	Accepts either a space-separated string (``"u r u'"``) or an iterable
-	of tokens (``["u", "r", "u'"]``). Returns the same type as the input.
+	By default, every input token is preserved unchanged unless a
+	contiguous same-face streak sums to identity (count mod 4 == 0), in
+	which case the whole streak is dropped. ``"u u"`` stays ``"u u"``;
+	``"u u u u"`` and ``"u u'"`` cancel completely.
 
-	The empty result (``""`` or ``[]``) represents the identity rotation.
+	With ``compact=True``, adjacent same-face moves are additionally
+	merged into shorthand notation: ``"u u"`` → ``"u2"``, ``"u u u"`` →
+	``"u'"``.
+
+	Accepts either a space-separated string or an iterable of tokens.
+	Returns the same type as the input.
 	"""
 	is_string = isinstance(moves, str)
 	tokens = moves.split() if is_string else list(moves)
 
+	# Stack entries are (face, count, original_token_or_None). The third
+	# field lets default mode emit the token exactly as the caller wrote
+	# it; compact mode synthesises tokens from (face, count) and stores
+	# None for the original.
 	stack = []
 	for token in tokens:
 		face, count = _parse(token)
-		if stack and stack[-1][0] == face:
-			new_count = (stack[-1][1] + count) % 4
-			if new_count == 0:
-				stack.pop()
-			else:
-				stack[-1] = (face, new_count)
-		else:
-			stack.append((face, count))
+		stack.append((face, count, token.lower().strip()))
 
-	out = [_format(face, count) for face, count in stack]
+		# Find the longest contiguous same-face suffix.
+		i = len(stack) - 1
+		while i > 0 and stack[i - 1][0] == face:
+			i -= 1
+		streak_total = sum(entry[1] for entry in stack[i:]) % 4
+
+		if streak_total == 0:
+			del stack[i:]
+		elif compact:
+			stack[i:] = [(face, streak_total, None)]
+
+	if compact:
+		out = [_format_compact(face, count) for face, count, _ in stack]
+	else:
+		out = [entry[2] for entry in stack]
+
 	return " ".join(out) if is_string else out
