@@ -10,7 +10,7 @@ Exports:
   multiple of 4. Output formatting depends on ``R = signed_sum mod 4``:
 
     R = 1 → ``x``                      (single positive)
-    R = 3 → ``x'``                     (single inverse, shorter than ``x x x``)
+    R = 3 → ``x'``                     (single inverse)
     R = 2 → sign-preserving by default:
               ``x x``     if sum > 0
               ``x' x'``   if sum < 0
@@ -21,10 +21,11 @@ Exports:
   - ``compact`` — collapse R = 2 streaks into the half-turn shorthand
     (``x2``); the half-turn has no signed equivalent so direction is
     forgotten.
-  - ``normalize`` — force positive output everywhere. R = 2 emits
-    ``x x`` regardless of sign; R = 3 expands to ``x x x`` rather than
-    ``x'``. ``compact`` still wins for R = 2 (gives ``x2``); ``normalize``
-    still wins for R = 3.
+  - ``normalize`` — flip negative count-2 streaks to their positive
+    equivalent (``x' x'`` → ``x x``). Only the aesthetic of count-2 is
+    affected; the move count of the output is identical to the default,
+    and single inverses (R = 1 or R = 3) are left as-is so the result is
+    never more moves than the default.
 
   Different faces never merge (no commutativity assumed).
 """
@@ -57,7 +58,9 @@ def _emit(face, signed_sum, compact, normalize):
 	if R == 1:
 		return [face]
 	if R == 3:
-		return [face, face, face] if normalize else [face + "'"]
+		# A single inverse — expanding to ``x x x`` for normalize would
+		# triple the move count, so we always keep ``x'`` here.
+		return [face + "'"]
 	# R == 2
 	if compact:
 		return [face + "2"]
@@ -83,9 +86,10 @@ def summarize_moves(moves, compact=False, normalize=False):
 
 	- ``compact=True`` — count-2 streaks collapse to the half-turn
 	  shorthand (``"u' u'"`` → ``"u2"``).
-	- ``normalize=True`` — emit positive tokens only. Negative count-2
-	  becomes positive (``"u' u'"`` → ``"u u"``); single inverses expand
-	  (``"u'"`` → ``"u u u"``).
+	- ``normalize=True`` — flip negative count-2 streaks to their
+	  positive equivalent (``"u' u'"`` → ``"u u"``). The output's move
+	  count is unchanged from default; only the aesthetic of count-2
+	  changes.
 
 	Accepts either a space-separated string or an iterable of tokens.
 	Returns the same type as the input.
